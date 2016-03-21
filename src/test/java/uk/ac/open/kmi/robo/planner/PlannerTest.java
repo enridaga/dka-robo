@@ -1,0 +1,216 @@
+package uk.ac.open.kmi.robo.planner;
+
+import static uk.open.ac.kmi.robo.planner.things.Symbols.Forever;
+import static uk.open.ac.kmi.robo.planner.things.Symbols.Location;
+import static uk.open.ac.kmi.robo.planner.things.Symbols.ValidQuad;
+import static uk.open.ac.kmi.robo.planner.things.Symbols._;
+import static uk.open.ac.kmi.robo.planner.things.Symbols.aQuadResource;
+import static uk.open.ac.kmi.robo.planner.things.Symbols.hasHumidity;
+import static uk.open.ac.kmi.robo.planner.things.Symbols.hasPeopleCount;
+import static uk.open.ac.kmi.robo.planner.things.Symbols.hasTemperature;
+import static uk.open.ac.kmi.robo.planner.things.Symbols.hasWiFiSignal;
+import static uk.open.ac.kmi.robo.planner.things.Symbols.type;
+
+import java.util.Arrays;
+
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TestName;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import harmony.core.api.fact.Fact;
+import harmony.core.api.operator.Action;
+import harmony.core.api.plan.Plan;
+import harmony.core.api.thing.Thing;
+import harmony.core.impl.condition.AssertFact;
+import harmony.core.impl.renderer.RendererImpl;
+import harmony.planner.NoSolutionException;
+import harmony.planner.bestfirst.Node;
+import uk.open.ac.kmi.robo.planner.MoveCostProvider;
+
+import uk.open.ac.kmi.robo.planner.RoboPlanner;
+import uk.open.ac.kmi.robo.planner.RoboProblem;
+import uk.open.ac.kmi.robo.planner.ValidityProvider;
+import uk.open.ac.kmi.robo.planner.things.QuadResource;
+import uk.open.ac.kmi.robo.planner.things.QuadResourceImpl;
+import uk.open.ac.kmi.robo.planner.things.Validity;
+import uk.open.ac.kmi.robo.planner.things.ValidityImpl;
+
+public class PlannerTest {
+
+	Logger log = LoggerFactory.getLogger(PlannerTest.class);
+
+	@Rule
+	public TestName name = new TestName();
+
+	// Thing R1 = aThing("R1");
+	final QuadResource L1 = aQuadResource("L1");
+	final QuadResource L2 = aQuadResource("L2");
+	final QuadResource L3 = aQuadResource("L3");
+	final QuadResource L4 = aQuadResource("L4");
+	final QuadResource L5 = aQuadResource("L5");
+	final QuadResource L6 = aQuadResource("L6");
+	final QuadResource L7 = aQuadResource("L7");
+	final QuadResource L8 = aQuadResource("L8");
+	final QuadResource L9 = aQuadResource("L9");
+	final QuadResource L10 = aQuadResource("L10");
+
+	private RoboProblem rp;
+	private MoveCostProvider mcp;
+	private ValidityProvider vp;
+
+	private QuadResource aValue() {
+		return new QuadResourceImpl("V" + System.currentTimeMillis());
+	}
+
+	@Before
+	public void Before() {
+		mcp = new MoveCostProvider() {
+
+			@Override
+			public int validityDecreaseFactor(Thing from, Thing to) {
+				try {
+					// This breaks if the two things are not L{number}
+					// in this case we return a _Always. This does not have
+					// effect in the plan
+					// as the Move action has a guard in the precodnitions to
+					// avoid to
+					// move from/to things that are not locations
+					int diff = Integer.parseInt(from.getSignature().substring(1))
+							- Integer.parseInt(to.getSignature().substring(1));
+					diff = Math.abs(diff);
+					log.debug("from {} to {} in {} minutes", new Object[] { from, to, diff });
+					return diff;
+				} catch (Exception e) {
+					return 0;
+				}
+			}
+		};
+		vp = new ValidityProvider() {
+
+			@Override
+			public Validity getValidity(Thing S, Thing P, Thing O) {
+				int v = 20;
+				Thing[] more = new Thing[] { L1, L2, L3, L4, L5 };
+				Thing[] less = new Thing[] { L6, L7, L8, L9, L10 };
+				// Temperature at location
+				if (P.equals(hasTemperature)) {
+					v = 30;
+				} else if (P.equals(hasPeopleCount)) {
+					v = 50;
+				} else if (P.equals(hasHumidity)) {
+					v = 30;
+				} else if (P.equals(hasWiFiSignal)) {
+					v = 100;
+				} 
+				if(Arrays.asList(more).contains(S)){
+					v += 10;
+				}else if(Arrays.asList(less).contains(S)){
+					v -= 10;
+				}
+				return new ValidityImpl(v);
+			}
+		};
+
+		rp = new RoboProblem();
+	}
+
+	private Plan search() throws NoSolutionException {
+		// PlannerInputBuilder ib = new PlannerInputBuilder(rd, rp);
+		// BestFirstPlanner planner = new BestFirstPlanner(ib.build());
+		RoboPlanner planner = new RoboPlanner(mcp, vp);
+		Plan plan = planner.search(rp);
+		Node last = planner.getLastSearchReport().getGoalNode();
+		log.info("Plan:");
+		for (Action a : plan.getActions()) {
+			log.info("{}", new RendererImpl().append(a));
+		}
+		log.info("Goal State:");
+		for (Fact f : last.getFacts()) {
+			log.info(" {}", new RendererImpl().append(f));
+		}
+		return plan;
+	}
+
+	@Test
+	public void temperature() throws NoSolutionException {
+
+		log.info("{}", name.getMethodName());
+		rp.onInitAt(L1);
+		rp.onInitQuad(Forever, L1, type, Location);
+		rp.onInitQuad(-100, L1, hasTemperature, aValue());
+		rp.onInitQuad(Forever, L2, type, Location);
+
+		rp.onGoalValidQuad(L1, hasTemperature, _);
+		//
+		search();
+	}
+
+	//
+	@Test
+	public void move() throws NoSolutionException {
+
+		log.info("{}", name.getMethodName());
+		rp.onInitAt(L1);
+		rp.onInitQuad(Forever, L1, type, Location);
+		rp.onInitQuad(-100, L1, hasTemperature, aValue());
+		rp.onInitQuad(Forever, L2, type, Location);
+		rp.onInitQuad(Forever, L3, type, Location);
+		rp.onInitQuad(Forever, L4, type, Location);
+		rp.onInitQuad(-100, L4, hasTemperature, aValue());
+		rp.onInitQuad(Forever, L5, type, Location);
+		rp.onInitQuad(-100, L5, hasTemperature, aValue());
+		// Goal
+		rp.onGoalAt(L5);
+		//
+		search();
+	}
+
+	@Test
+	public void plan1() throws NoSolutionException {
+
+		log.info("{}", name.getMethodName());
+		rp.onInitAt(L1);
+		rp.onInitQuad(Forever, L1, type, Location);
+		rp.onInitQuad(Forever, L2, type, Location);
+		rp.onInitQuad(Forever, L3, type, Location);
+		rp.onInitQuad(Forever, L4, type, Location);
+		rp.onInitQuad(-100, L4, hasTemperature, aValue());
+		rp.onInitQuad(Forever, L5, type, Location);
+		rp.onInitQuad(-100, L5, hasTemperature, aValue());
+		// Goal
+		rp.onGoal(new AssertFact(ValidQuad, L5, hasTemperature, _));
+		rp.onGoal(new AssertFact(ValidQuad, L4, hasTemperature, _));
+		//
+		search();
+	}
+
+	@Test
+	public void plan2() throws NoSolutionException {
+
+		log.info("{}", name.getMethodName());
+		rp.onInitAt(L1);
+		rp.onInitQuad(Forever, L1, type, Location);
+		rp.onInitQuad(Forever, L2, type, Location);
+		rp.onInitQuad(Forever, L3, type, Location);
+		rp.onInitQuad(Forever, L4, type, Location);
+		rp.onInitQuad(Forever, L5, type, Location);
+		rp.onInitQuad(-100, L5, hasTemperature, aValue());
+		rp.onInitQuad(-100, L4, hasTemperature, aValue());
+//		rp.onInitQuad(-100, L4, hasHumidity, aValue());
+//		rp.onInitQuad(-100, L3, hasHumidity, aValue());
+//		rp.onInitQuad(-100, L3, hasWiFiSignal, aValue());
+		rp.onInitQuad(-100, L3, hasPeopleCount, aValue());
+		// Goal
+		rp.onGoal(new AssertFact(ValidQuad, L5, hasTemperature, _));
+		rp.onGoal(new AssertFact(ValidQuad, L4, hasTemperature, _));
+//		rp.onGoal(new AssertFact(ValidQuad, L4, hasHumidity, _));
+//		rp.onGoal(new AssertFact(ValidQuad, L3, hasHumidity, _));
+//		rp.onGoal(new AssertFact(ValidQuad, L3, hasWiFiSignal, _));
+		rp.onGoal(new AssertFact(ValidQuad, L3, hasPeopleCount, _));
+		//
+		search();
+	}
+}
