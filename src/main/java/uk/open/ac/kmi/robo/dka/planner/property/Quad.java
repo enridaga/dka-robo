@@ -1,6 +1,6 @@
-package uk.open.ac.kmi.robo.planner.property;
+package uk.open.ac.kmi.robo.dka.planner.property;
 
-import static uk.open.ac.kmi.robo.planner.things.Symbols._;
+import static uk.open.ac.kmi.robo.dka.planner.things.Symbols._;
 
 import java.util.List;
 
@@ -11,10 +11,10 @@ import harmony.core.api.state.State;
 import harmony.core.api.thing.Thing;
 import harmony.core.impl.property.BasicProperty;
 import harmony.core.impl.property.DerivedPropertyException;
-import uk.open.ac.kmi.robo.planner.things.QuadProperty;
-import uk.open.ac.kmi.robo.planner.things.QuadResource;
-import uk.open.ac.kmi.robo.planner.things.Symbols;
-import uk.open.ac.kmi.robo.planner.things.Validity;
+import uk.open.ac.kmi.robo.dka.planner.things.QuadProperty;
+import uk.open.ac.kmi.robo.dka.planner.things.QuadResource;
+import uk.open.ac.kmi.robo.dka.planner.things.Symbols;
+import uk.open.ac.kmi.robo.dka.planner.things.Validity;
 
 /**
  * 

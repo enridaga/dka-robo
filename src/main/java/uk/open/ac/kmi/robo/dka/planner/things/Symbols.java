@@ -1,11 +1,11 @@
-package uk.open.ac.kmi.robo.planner.things;
+package uk.open.ac.kmi.robo.dka.planner.things;
 
 import harmony.core.api.property.Property;
-import uk.open.ac.kmi.robo.planner.property.At;
-import uk.open.ac.kmi.robo.planner.property.Produced;
-import uk.open.ac.kmi.robo.planner.property.Quad;
-import uk.open.ac.kmi.robo.planner.property.ValidQuad;
-import uk.open.ac.kmi.robo.planner.things.ValidityImpl.Forever;
+import uk.open.ac.kmi.robo.dka.planner.property.At;
+import uk.open.ac.kmi.robo.dka.planner.property.Produced;
+import uk.open.ac.kmi.robo.dka.planner.property.Quad;
+import uk.open.ac.kmi.robo.dka.planner.property.ValidQuad;
+import uk.open.ac.kmi.robo.dka.planner.things.ValidityImpl.Forever;
 
 public final class Symbols {
 

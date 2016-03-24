@@ -6,7 +6,7 @@
     <version>0.0.2-SNAPSHOT</version>
   </parent>
   <groupId>kmi-robolab</groupId>
-  <artifactId>robo-planner</artifactId>
+  <artifactId>dka-planner</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <dependencies>
   	<dependency>

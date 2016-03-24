@@ -1,17 +1,17 @@
-package uk.open.ac.kmi.robo.planner.operator;
+package uk.open.ac.kmi.robo.dka.planner.operator;
 
-import static uk.open.ac.kmi.robo.planner.things.Symbols.At;
-import static uk.open.ac.kmi.robo.planner.things.Symbols.Forever;
-import static uk.open.ac.kmi.robo.planner.things.Symbols.Location;
-import static uk.open.ac.kmi.robo.planner.things.Symbols.Produced;
-import static uk.open.ac.kmi.robo.planner.things.Symbols.Quad;
-import static uk.open.ac.kmi.robo.planner.things.Symbols.ValidQuad;
-import static uk.open.ac.kmi.robo.planner.things.Symbols._;
-import static uk.open.ac.kmi.robo.planner.things.Symbols.hasTemperature;
-import static uk.open.ac.kmi.robo.planner.things.Symbols.hasWiFiSignal;
-import static uk.open.ac.kmi.robo.planner.things.Symbols.hasPeopleCount;
-import static uk.open.ac.kmi.robo.planner.things.Symbols.hasHumidity;
-import static uk.open.ac.kmi.robo.planner.things.Symbols.type;
+import static uk.open.ac.kmi.robo.dka.planner.things.Symbols.At;
+import static uk.open.ac.kmi.robo.dka.planner.things.Symbols.Forever;
+import static uk.open.ac.kmi.robo.dka.planner.things.Symbols.Location;
+import static uk.open.ac.kmi.robo.dka.planner.things.Symbols.Produced;
+import static uk.open.ac.kmi.robo.dka.planner.things.Symbols.Quad;
+import static uk.open.ac.kmi.robo.dka.planner.things.Symbols.ValidQuad;
+import static uk.open.ac.kmi.robo.dka.planner.things.Symbols._;
+import static uk.open.ac.kmi.robo.dka.planner.things.Symbols.hasHumidity;
+import static uk.open.ac.kmi.robo.dka.planner.things.Symbols.hasPeopleCount;
+import static uk.open.ac.kmi.robo.dka.planner.things.Symbols.hasTemperature;
+import static uk.open.ac.kmi.robo.dka.planner.things.Symbols.hasWiFiSignal;
+import static uk.open.ac.kmi.robo.dka.planner.things.Symbols.type;
 
 import harmony.core.api.condition.Condition;
 import harmony.core.api.effect.CompositeEffect;
@@ -27,11 +27,11 @@ import harmony.core.impl.effect.BasicEffect;
 import harmony.core.impl.effect.CompositeEffectImpl;
 import harmony.core.impl.effect.ForallEffect;
 import harmony.core.impl.fact.BasicFact;
-import uk.open.ac.kmi.robo.planner.ValidityProvider;
-import uk.open.ac.kmi.robo.planner.things.QuadProperty;
-import uk.open.ac.kmi.robo.planner.things.QuadResource;
-import uk.open.ac.kmi.robo.planner.things.QuadResourceImpl;
-import uk.open.ac.kmi.robo.planner.things.Validity;
+import uk.open.ac.kmi.robo.dka.planner.ValidityProvider;
+import uk.open.ac.kmi.robo.dka.planner.things.QuadProperty;
+import uk.open.ac.kmi.robo.dka.planner.things.QuadResource;
+import uk.open.ac.kmi.robo.dka.planner.things.QuadResourceImpl;
+import uk.open.ac.kmi.robo.dka.planner.things.Validity;
 
 public abstract class Observe extends RoboOperator {
 	private int actionCost;

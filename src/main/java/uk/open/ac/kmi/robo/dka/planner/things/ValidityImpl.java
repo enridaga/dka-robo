@@ -1,4 +1,4 @@
-package uk.open.ac.kmi.robo.planner.things;
+package uk.open.ac.kmi.robo.dka.planner.things;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 

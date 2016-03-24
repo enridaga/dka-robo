@@ -1,7 +1,7 @@
-package uk.open.ac.kmi.robo.planner.operator;
+package uk.open.ac.kmi.robo.dka.planner.operator;
 
-import static uk.open.ac.kmi.robo.planner.things.Symbols.Forever;
-import static uk.open.ac.kmi.robo.planner.things.Symbols.Quad;
+import static uk.open.ac.kmi.robo.dka.planner.things.Symbols.Forever;
+import static uk.open.ac.kmi.robo.dka.planner.things.Symbols.Quad;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,10 +12,10 @@ import harmony.core.api.fact.Fact;
 import harmony.core.api.state.State;
 import harmony.core.api.thing.Thing;
 import harmony.core.impl.fact.BasicFact;
-import uk.open.ac.kmi.robo.planner.things.QuadProperty;
-import uk.open.ac.kmi.robo.planner.things.QuadResource;
-import uk.open.ac.kmi.robo.planner.things.Validity;
-import uk.open.ac.kmi.robo.planner.things.ValidityImpl;
+import uk.open.ac.kmi.robo.dka.planner.things.QuadProperty;
+import uk.open.ac.kmi.robo.dka.planner.things.QuadResource;
+import uk.open.ac.kmi.robo.dka.planner.things.Validity;
+import uk.open.ac.kmi.robo.dka.planner.things.ValidityImpl;
 
 public class DecreaseValidityEffect implements Effect {
 

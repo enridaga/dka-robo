@@ -1,4 +1,4 @@
-package uk.open.ac.kmi.robo.planner;
+package uk.open.ac.kmi.robo.dka.planner;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,9 +14,9 @@ import harmony.core.impl.fact.BasicFact;
 import harmony.core.impl.goal.GoalImpl;
 import harmony.core.impl.state.InitialState;
 import harmony.core.impl.state.StaticState;
-import uk.open.ac.kmi.robo.planner.things.Symbols;
-import uk.open.ac.kmi.robo.planner.things.Validity;
-import uk.open.ac.kmi.robo.planner.things.ValidityImpl;
+import uk.open.ac.kmi.robo.dka.planner.things.Symbols;
+import uk.open.ac.kmi.robo.dka.planner.things.Validity;
+import uk.open.ac.kmi.robo.dka.planner.things.ValidityImpl;
 
 public class RoboProblem implements Problem {
 	Set<Fact> init = new HashSet<Fact>();
