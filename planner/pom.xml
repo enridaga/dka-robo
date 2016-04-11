@@ -14,13 +14,12 @@
 	</repositories>
 
 	<parent>
-		<groupId>harmony</groupId>
+		<groupId>dka-robo</groupId>
 		<artifactId>parent</artifactId>
-		<version>0.0.2-SNAPSHOT</version>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../parent</relativePath>
 	</parent>
-	<groupId>kmi-robolab</groupId>
 	<artifactId>dka-planner</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	<dependencies>
 		<dependency>
 			<groupId>org.slf4j</groupId>
