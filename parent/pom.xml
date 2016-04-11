@@ -12,12 +12,34 @@
 		<project.build.source>1.7</project.build.source>
 		<project.build.target>1.7</project.build.target>
 		
+		<harmony.version>0.0.2-SNAPSHOT</harmony.version>
+	
 	</properties>
 
 
 
 	<dependencyManagement>
 		<dependencies>
+		<dependency>
+			<groupId>harmony</groupId>
+			<artifactId>dsl</artifactId>
+			<version>${harmony.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>harmony</groupId>
+			<artifactId>core</artifactId>
+			<version>${harmony.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>harmony</groupId>
+			<artifactId>planner</artifactId>
+			<version>${harmony.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>harmony</groupId>
+			<artifactId>commons</artifactId>
+			<version>${harmony.version}</version>
+		</dependency>
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
@@ -47,4 +69,11 @@
 		</dependencies>
 	</dependencyManagement>
 
+	<repositories>
+		<repository>
+			<id>harmony-mvn-repo</id>
+			<name>Harmony Maven Repository</name>
+			<url>https://raw.githubusercontent.com/enridaga/harmony/mvn-repo/</url>
+		</repository>
+	</repositories>
 </project>

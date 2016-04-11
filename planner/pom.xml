@@ -2,16 +2,6 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<properties>
-		<harmony.version>0.0.2-SNAPSHOT</harmony.version>
-	</properties>
-	<repositories>
-		<repository>
-			<id>harmony-mvn-repo</id>
-			<name>Harmony Maven Repository</name>
-			<url>https://raw.githubusercontent.com/enridaga/harmony/mvn-repo/</url>
-		</repository>
-	</repositories>
 
 	<parent>
 		<groupId>dka-robo</groupId>
@@ -19,32 +9,27 @@
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../parent</relativePath>
 	</parent>
-	<artifactId>dka-planner</artifactId>
+	<artifactId>planner</artifactId>
 	<dependencies>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-simple</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>harmony</groupId>
 			<artifactId>dsl</artifactId>
-			<version>${harmony.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>harmony</groupId>
 			<artifactId>core</artifactId>
-			<version>${harmony.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>harmony</groupId>
 			<artifactId>planner</artifactId>
-			<version>${harmony.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>harmony</groupId>
 			<artifactId>commons</artifactId>
-			<version>${harmony.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -55,4 +40,5 @@
 			<artifactId>junit</artifactId>
 		</dependency>
 	</dependencies>
+	<name>DKA Robo Planner</name>
 </project>
