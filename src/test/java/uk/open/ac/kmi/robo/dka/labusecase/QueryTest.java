@@ -66,4 +66,26 @@ public class QueryTest {
 			l.info("{}", new RendererImpl().append(fa).toString());
 		}
 	}
+	
+	@Test
+	public void testFactory(){
+		String query = "SELECT (MAX(?O) as ?M) WHERE { GRAPH ?g { ?S <" + Vocabulary.NS + "hasHumidity> ?O . ?S <" + Vocabulary.NS + "hasTemperature> ?X } } ";
+		Dataset dataset = DatasetFactory.createMem();//
+		// new DatasetImpl(ModelFactory.createDefaultModel());
+		RDFDataMgr.read(dataset, getClass().getClassLoader().getResourceAsStream("./KB.txt"), Lang.NQ);
+		
+		VQueryExecution qe = VQueryExecutionFactory.create(query, dataset);
+		ResultSet rs = qe.execSelect();
+		while (rs.hasNext()) {
+			l.info("res: {}", rs.next());
+		}
+		l.info("res: {}", rs.getRowNumber());
+		qe.close();
+
+		RoboProblem problem = qe.getProblemBuilder().getProblem();
+		List<Fact> facts = problem.getInitialState().getFacts();
+		for (Fact fa : facts) {
+			l.info("{}", new RendererImpl().append(fa).toString());
+		}
+	}
 }
