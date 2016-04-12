@@ -16,6 +16,7 @@
 		<module>parent</module>
 		<module>planner</module>
 		<module>sparql</module>
+		<module>server</module>
 	</modules>
 
 

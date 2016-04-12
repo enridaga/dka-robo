@@ -40,5 +40,5 @@
 			<artifactId>junit</artifactId>
 		</dependency>
 	</dependencies>
-	<name>DKA Robo Planner</name>
+	<name>DKA Robo :: Planner</name>
 </project>
