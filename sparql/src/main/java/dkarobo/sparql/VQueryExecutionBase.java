@@ -1,10 +1,10 @@
 package dkarobo.sparql;
 
-import com.hp.hpl.jena.query.Dataset;
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.sparql.engine.QueryEngineFactory;
-import com.hp.hpl.jena.sparql.engine.QueryExecutionBase;
-import com.hp.hpl.jena.sparql.util.Context;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.query.Query;
+import org.apache.jena.sparql.engine.QueryEngineFactory;
+import org.apache.jena.sparql.engine.QueryExecutionBase;
+import org.apache.jena.sparql.util.Context;
 
 public abstract class VQueryExecutionBase extends QueryExecutionBase implements VQueryExecution {
 

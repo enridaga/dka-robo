@@ -1,7 +1,7 @@
 package dkarobo.sparql;
 
-import uk.open.ac.kmi.robo.dka.planner.RoboProblem;
-import uk.open.ac.kmi.robo.dka.planner.things.Symbols;
+import dkarobo.planner.RoboProblem;
+import dkarobo.planner.things.Symbols;
 
 public class VRoboProblemBuilder implements VQuadListener {
 

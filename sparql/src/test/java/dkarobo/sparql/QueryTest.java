@@ -2,35 +2,29 @@ package dkarobo.sparql;
 
 import java.util.List;
 
+import org.apache.jena.query.ARQ;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.query.DatasetFactory;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QueryFactory;
+import org.apache.jena.query.ResultSet;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.sparql.engine.ExecutionContext;
+import org.apache.jena.sparql.engine.QueryEngineFactory;
+import org.apache.jena.sparql.engine.QueryEngineRegistry;
+import org.apache.jena.sparql.engine.QueryExecutionBase;
+import org.apache.jena.sparql.engine.main.OpExecutor;
+import org.apache.jena.sparql.engine.main.OpExecutorFactory;
+import org.apache.jena.sparql.engine.main.QC;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.query.ARQ;
-import com.hp.hpl.jena.query.Dataset;
-import com.hp.hpl.jena.query.DatasetFactory;
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryFactory;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.sparql.engine.ExecutionContext;
-import com.hp.hpl.jena.sparql.engine.QueryEngineFactory;
-import com.hp.hpl.jena.sparql.engine.QueryEngineRegistry;
-import com.hp.hpl.jena.sparql.engine.QueryExecutionBase;
-import com.hp.hpl.jena.sparql.engine.main.OpExecutor;
-import com.hp.hpl.jena.sparql.engine.main.OpExecutorFactory;
-import com.hp.hpl.jena.sparql.engine.main.QC;
-
-import dkarobo.sparql.VOpExecutor;
-import dkarobo.sparql.VQueryExecution;
-import dkarobo.sparql.VQueryExecutionFactory;
-import dkarobo.sparql.VRoboProblemBuilder;
-import dkarobo.sparql.Vocabulary;
+import dkarobo.planner.RoboProblem;
 import harmony.core.api.fact.Fact;
 import harmony.core.impl.renderer.RendererImpl;
-import uk.open.ac.kmi.robo.dka.planner.RoboProblem;
 
 public class QueryTest {
 	private final static Logger l = LoggerFactory.getLogger(QueryTest.class);
