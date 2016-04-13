@@ -15,7 +15,7 @@ public abstract class RoboOperator extends AbstractOperator {
 
 	protected boolean usesWildcard(Thing... T) {
 		for (Thing t : T) {
-			if (t.equals(Symbols._))
+			if (t.equals(Symbols._anything))
 				return true;
 		}
 		return false;

@@ -3,7 +3,7 @@ package dkarobo.planner;
 import static dkarobo.planner.things.Symbols.Forever;
 import static dkarobo.planner.things.Symbols.Location;
 import static dkarobo.planner.things.Symbols.ValidQuad;
-import static dkarobo.planner.things.Symbols._;
+import static dkarobo.planner.things.Symbols._anything;
 import static dkarobo.planner.things.Symbols.aQuadResource;
 import static dkarobo.planner.things.Symbols.hasHumidity;
 import static dkarobo.planner.things.Symbols.hasPeopleCount;
@@ -201,7 +201,7 @@ public class PlannerTest {
 		rp.onInitQuad(-100, L1, hasTemperature, aValue());
 		rp.onInitQuad(Forever, L2, type, Location);
 
-		rp.onGoalValidQuad(L1, hasTemperature, _);
+		rp.onGoalValidQuad(L1, hasTemperature, _anything);
 		//
 		search();
 	}
@@ -239,8 +239,8 @@ public class PlannerTest {
 		rp.onInitQuad(Forever, L5, type, Location);
 		rp.onInitQuad(-100, L5, hasTemperature, aValue());
 		// Goal
-		rp.onGoal(new AssertFact(ValidQuad, L5, hasTemperature, _));
-		rp.onGoal(new AssertFact(ValidQuad, L4, hasTemperature, _));
+		rp.onGoal(new AssertFact(ValidQuad, L5, hasTemperature, _anything));
+		rp.onGoal(new AssertFact(ValidQuad, L4, hasTemperature, _anything));
 		//
 		search();
 	}
@@ -272,17 +272,17 @@ public class PlannerTest {
 		rp.onInitQuad(-100, L7, hasTemperature, aValue());
 		rp.onInitQuad(-100, L10, hasHumidity, aValue());
 		// Goal
-		rp.onGoal(new AssertFact(ValidQuad, L3, hasHumidity, _));
-		rp.onGoal(new AssertFact(ValidQuad, L3, hasWiFiSignal, _));
-		rp.onGoal(new AssertFact(ValidQuad, L3, hasPeopleCount, _));
-		rp.onGoal(new AssertFact(ValidQuad, L4, hasTemperature, _));
-		rp.onGoal(new AssertFact(ValidQuad, L4, hasHumidity, _));
-		rp.onGoal(new AssertFact(ValidQuad, L5, hasTemperature, _));
-		rp.onGoal(new AssertFact(ValidQuad, L6, hasWiFiSignal, _));
-		rp.onGoal(new AssertFact(ValidQuad, L6, hasTemperature, _));
-		rp.onGoal(new AssertFact(ValidQuad, L7, hasHumidity, _));
-		rp.onGoal(new AssertFact(ValidQuad, L7, hasTemperature, _));
-		rp.onGoal(new AssertFact(ValidQuad, L10, hasHumidity, _));
+		rp.onGoal(new AssertFact(ValidQuad, L3, hasHumidity, _anything));
+		rp.onGoal(new AssertFact(ValidQuad, L3, hasWiFiSignal, _anything));
+		rp.onGoal(new AssertFact(ValidQuad, L3, hasPeopleCount, _anything));
+		rp.onGoal(new AssertFact(ValidQuad, L4, hasTemperature, _anything));
+		rp.onGoal(new AssertFact(ValidQuad, L4, hasHumidity, _anything));
+		rp.onGoal(new AssertFact(ValidQuad, L5, hasTemperature, _anything));
+		rp.onGoal(new AssertFact(ValidQuad, L6, hasWiFiSignal, _anything));
+		rp.onGoal(new AssertFact(ValidQuad, L6, hasTemperature, _anything));
+		rp.onGoal(new AssertFact(ValidQuad, L7, hasHumidity, _anything));
+		rp.onGoal(new AssertFact(ValidQuad, L7, hasTemperature, _anything));
+		rp.onGoal(new AssertFact(ValidQuad, L10, hasHumidity, _anything));
 		//
 		searchAndReport(2000);
 

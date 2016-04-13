@@ -1,6 +1,6 @@
 package dkarobo.planner.property;
 
-import static dkarobo.planner.things.Symbols._;
+import static dkarobo.planner.things.Symbols._anything;
 
 import java.util.List;
 
@@ -30,7 +30,7 @@ public class ValidQuad extends BasicProperty implements DerivableProperty {
 		// Find matching quads and check that all of them are valid.
 		for (Fact f : facts) {
 			for (int i = 0; i < 3; i++) {
-				if (T[i].equals(_) || T[i].equals(f.getThing(i + 1))) {
+				if (T[i].equals(_anything) || T[i].equals(f.getThing(i + 1))) {
 					if (i == 2) {
 						//System.out.println(new RendererImpl().append(f).toString());
 						// Quad match, but is it time valid?

@@ -21,7 +21,7 @@ public final class Symbols {
 	public static final QuadProperty hasWiFiSignal =  aQuadProperty("hasWiFiSignal");
 	public static final QuadProperty type =  aQuadProperty("type");
 	public static final QuadProperty hasTemperature = aQuadProperty("hasTemperature");
-	public static final Wildcard _ = new Wildcard();
+	public static final Wildcard _anything = Wildcard.it();
 
 	public static final QuadResource aQuadResource(String id) {
 		return new QuadResourceImpl(id);

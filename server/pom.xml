@@ -86,6 +86,11 @@
 			<groupId>dka-robo</groupId>
 			<artifactId>sparql</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.jena</groupId>
+			<artifactId>jena-base</artifactId>
+			<version>3.0.1</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -137,6 +142,7 @@
 				<directory>src/main/resources</directory>
 				<includes>
 					<include>**/**</include>
+					<include>**</include>
 				</includes>
 			</resource>
 			<resource>

@@ -2,7 +2,7 @@ package dkarobo.planner;
 
 import static dkarobo.planner.things.Symbols.Forever;
 import static dkarobo.planner.things.Symbols.Quad;
-import static dkarobo.planner.things.Symbols._;
+import static dkarobo.planner.things.Symbols._anything;
 
 import java.util.HashMap;
 import java.util.List;
@@ -62,7 +62,7 @@ public class RoboBestNode implements BestNodeHeuristic {
 		int sum = 0;
 		int num = 0;
 		for (Fact f : ff) {
-			if (f.getThing(0).equals(Forever) || f.getThing(0).equals(_))
+			if (f.getThing(0).equals(Forever) || f.getThing(0).equals(_anything))
 				continue;
 			int v = ((Validity) f.getThing(0)).asInteger();
 			num++;

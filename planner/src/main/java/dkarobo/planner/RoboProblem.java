@@ -55,7 +55,7 @@ public class RoboProblem implements Problem {
 	@Override
 	public InitialState getInitialState() {
 		// Objects cannot include a wildcard in the init state!
-		if (objects.contains(Symbols._)) {
+		if (objects.contains(Symbols._anything)) {
 			throw new RuntimeException("Wildcard _ not valid in init facts!");
 		}
 		StaticState state = new StaticState();

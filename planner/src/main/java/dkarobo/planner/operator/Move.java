@@ -6,7 +6,7 @@ import static dkarobo.planner.things.Symbols.Location;
 import static dkarobo.planner.things.Symbols.Produced;
 import static dkarobo.planner.things.Symbols.Quad;
 import static dkarobo.planner.things.Symbols.ValidQuad;
-import static dkarobo.planner.things.Symbols._;
+import static dkarobo.planner.things.Symbols._anything;
 import static dkarobo.planner.things.Symbols.type;
 
 import dkarobo.planner.MoveCostProvider;
@@ -77,7 +77,7 @@ public class Move extends RoboOperator {
 				And and = new And();
 				and.append(new Not(new Equality(T[0], H[0])));
 				and.append(new Equality(T[1], H[0]));
-				and.append(new AssertFact(Quad, _, H[0], H[1], H[2]));
+				and.append(new AssertFact(Quad, _anything, H[0], H[1], H[2]));
 				and.append(new Not(new AssertFact(ValidQuad, H[0], H[1], H[2])));
 				and.append(new Not(new AssertFact(Produced, H[0], H[1], H[2])));
 				return and;

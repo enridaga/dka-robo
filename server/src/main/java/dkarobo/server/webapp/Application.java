@@ -27,9 +27,20 @@ public class Application extends ResourceConfig implements ServletContextListene
 		packages("dkarobo.server.webapp.rest");
 	}
 
+//	static{
+//		try {
+//			Application.class.getClassLoader().loadClass("org.apache.jena.query.ARQ");
+//			Application.class.getClassLoader().loadClass("org.apache.jena.tdb.TDBFactory");
+//		} catch (ClassNotFoundException e) {
+//			e.printStackTrace();
+//		}
+//	}
+	
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
 		log.info("Initializing context.");
+		
+		//ARQ.init();
 		log.debug("Setting up database");
 		Dataset dataset;
 		String dataString = sce.getServletContext().getInitParameter(_ParamDATA);

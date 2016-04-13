@@ -6,7 +6,7 @@ import static dkarobo.planner.things.Symbols.Location;
 import static dkarobo.planner.things.Symbols.Produced;
 import static dkarobo.planner.things.Symbols.Quad;
 import static dkarobo.planner.things.Symbols.ValidQuad;
-import static dkarobo.planner.things.Symbols._;
+import static dkarobo.planner.things.Symbols._anything;
 import static dkarobo.planner.things.Symbols.hasHumidity;
 import static dkarobo.planner.things.Symbols.hasPeopleCount;
 import static dkarobo.planner.things.Symbols.hasTemperature;
@@ -57,11 +57,11 @@ public abstract class Observe extends RoboOperator {
 		// T[0] has to be a location?
 		and.append(new AssertFact(Quad, Forever, T[0], type, Location));
 		// We do have an observation
-		and.append(new AssertFact(Quad, _, T[0], property, _));
+		and.append(new AssertFact(Quad, _anything, T[0], property, _anything));
 		// and observation is invalid
-		and.append(new Not(new AssertFact(ValidQuad, T[0], property, _)));
+		and.append(new Not(new AssertFact(ValidQuad, T[0], property, _anything)));
 		// and has been never observed before
-		and.append(new Not(new AssertFact(Produced, T[0], property, _)));
+		and.append(new Not(new AssertFact(Produced, T[0], property, _anything)));
 		return and;
 	}
 

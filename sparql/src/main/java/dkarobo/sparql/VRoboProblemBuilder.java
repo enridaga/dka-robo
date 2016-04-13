@@ -2,6 +2,7 @@ package dkarobo.sparql;
 
 import dkarobo.planner.RoboProblem;
 import dkarobo.planner.things.Symbols;
+import dkarobo.planner.things.Wildcard;
 
 public class VRoboProblemBuilder implements VQuadListener {
 
@@ -32,7 +33,7 @@ public class VRoboProblemBuilder implements VQuadListener {
 			// Invalid Quad
 			problem.onInitQuad(((Long) validity).intValue(), Symbols.aQuadResource(S), Symbols.aQuadProperty(P),
 					Symbols.aQuadResource(O));
-			problem.onGoalValidQuad(Symbols.aQuadResource(S), Symbols.aQuadProperty(P), Symbols._);
+			problem.onGoalValidQuad(Symbols.aQuadResource(S), Symbols.aQuadProperty(P), Wildcard.it());
 		}
 	}
 

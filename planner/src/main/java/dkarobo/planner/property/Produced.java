@@ -1,6 +1,6 @@
 package dkarobo.planner.property;
 
-import static dkarobo.planner.things.Symbols._;
+import static dkarobo.planner.things.Symbols._anything;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class Produced extends BasicProperty implements DerivableProperty {
 		boolean canBeDerivable = false;
 		// If any of the elements of the quad is the wildcard only
 		for (Thing t : T) {
-			if (t.equals(Symbols._)) {
+			if (t.equals(Symbols._anything)) {
 				canBeDerivable = true;
 				break;
 			}
@@ -39,7 +39,7 @@ public class Produced extends BasicProperty implements DerivableProperty {
 		List<Fact> facts = FR.getFacts(Symbols.Produced);
 		for (Fact f : facts) {
 			for (int i = 0; i < 3; i++) {
-				if (T[i].equals(_) || T[i].equals(f.getThing(i))) {
+				if (T[i].equals(_anything) || T[i].equals(f.getThing(i))) {
 					if (i == 2) {
 						// Found!
 						return true;

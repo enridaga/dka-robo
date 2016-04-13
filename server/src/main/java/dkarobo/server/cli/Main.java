@@ -1,5 +1,6 @@
 package dkarobo.server.cli;
 
+import org.apache.jena.system.JenaSystem;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
@@ -8,6 +9,9 @@ import org.eclipse.jetty.webapp.WebAppContext;
 import dkarobo.server.webapp.Application;
 
 public class Main {
+	static{
+		JenaSystem.DEBUG_INIT = true ;
+	}
 	public static void main(String[] args) {
 		System.out.println("#1: dka-robo::server starting");
 		Cli cli = new Cli(args);
@@ -27,8 +31,8 @@ public class Main {
 				.getResource("/WEB-INF/web.xml").toString();
 		root.setDescriptor(webxmlLocation);
 		// Pass Cli arguments to Application
-		root.getServletContext().setInitParameter(Application._ParamDATA, cli.getParamData());
-		root.getServletContext().setInitParameter(Application._ParamLOAD, cli.getParamLoad());
+		root.setInitParameter(Application._ParamDATA, cli.getParamData());
+		root.setInitParameter(Application._ParamLOAD, cli.getParamLoad());
 		
 		String resLocation = Main.class
 				.getResource("/static").toString();

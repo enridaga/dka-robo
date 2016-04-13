@@ -13,7 +13,7 @@ import org.apache.commons.cli.ParseException;
 public class Cli {
 	private int port = 8080;
 	private String data = "./dka-server-data";
-	private String load = null;
+	private String load = "";
 
 	private String[] args;
 
@@ -31,7 +31,7 @@ public class Cli {
 		options.addOption("h", "help", false, "Show this help.");
 		options.addOption("p", "port", true, "Set the port the server will listen to (defaults to 8080).");
 		options.addOption("l", "load", true, "Load this file (must be in N-QUAD format).");
-		options.addOption("d", "data", true, "Database directory (default is ./dka-data).");
+		options.addOption("d", "data", true, "Database directory (default is ./dka-server-data).");
 	}
 
 	private void help() {
