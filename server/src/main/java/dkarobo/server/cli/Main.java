@@ -1,6 +1,5 @@
 package dkarobo.server.cli;
 
-import org.apache.jena.system.JenaSystem;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
@@ -9,9 +8,6 @@ import org.eclipse.jetty.webapp.WebAppContext;
 import dkarobo.server.webapp.Application;
 
 public class Main {
-	static{
-		JenaSystem.DEBUG_INIT = true ;
-	}
 	public static void main(String[] args) {
 		System.out.println("#1: dka-robo::server starting");
 		Cli cli = new Cli(args);
