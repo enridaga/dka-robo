@@ -13,9 +13,9 @@ import org.apache.jena.sparql.engine.binding.Binding;
 import org.apache.jena.sparql.engine.iterator.QueryIteratorWrapper;
 import org.apache.jena.sparql.engine.main.OpExecutor;
 
-public class VOpExecutor extends OpExecutor {
-	private VQuadListener quadListener;
-	public VOpExecutor(ExecutionContext execCtx, VQuadListener quadListener) {
+public class MonitoredOpExecutor extends OpExecutor {
+	private QuadListener quadListener;
+	public MonitoredOpExecutor(ExecutionContext execCtx, QuadListener quadListener) {
 		super(execCtx);
 		this.quadListener = quadListener;
 	}

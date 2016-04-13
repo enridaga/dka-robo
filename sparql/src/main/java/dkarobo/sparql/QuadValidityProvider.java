@@ -6,7 +6,7 @@ package dkarobo.sparql;
  * @author enridaga
  *
  */
-public interface VQuadValidityProvider {
+public interface QuadValidityProvider {
 
 	public int elapsingSeconds(String G, String S, String P, String O);
 }

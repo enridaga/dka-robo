@@ -20,11 +20,11 @@ import org.slf4j.LoggerFactory;
 
 import dkarobo.planner.RoboProblem;
 import dkarobo.server.webapp.Application;
-import dkarobo.sparql.VInvalidQuadCollector;
-import dkarobo.sparql.VQuadValidityComputer;
-import dkarobo.sparql.VQuadValidityProvider;
-import dkarobo.sparql.VQueryExecutionFactory;
-import dkarobo.sparql.VRoboProblemBuilder;
+import dkarobo.sparql.InvalidQuadCollector;
+import dkarobo.sparql.QuadValidityComputer;
+import dkarobo.sparql.QuadValidityProvider;
+import dkarobo.sparql.MonitoredQueryExecutionFactory;
+import dkarobo.sparql.RoboProblemBuilder;
 import dkarobo.sparql.Vocabulary;
 import harmony.core.api.fact.Fact;
 import harmony.core.impl.renderer.RendererImpl;
@@ -50,9 +50,9 @@ public class PlannerEndpoint {
 	public Response get(@QueryParam("query") String query) {
 		log.trace("Calling GET /problem");
 		Dataset dataset = (Dataset) context.getAttribute(Application._ObjectDataset);
-		VQuadValidityProvider provider = new VQuadValidityComputer(Vocabulary.NS_GRAPH, System.currentTimeMillis());
-		VInvalidQuadCollector collector = new VInvalidQuadCollector(provider);
-		QueryExecution qe = VQueryExecutionFactory.create(query, dataset,
+		QuadValidityProvider provider = new QuadValidityComputer(Vocabulary.NS_GRAPH, System.currentTimeMillis());
+		InvalidQuadCollector collector = new InvalidQuadCollector(provider);
+		QueryExecution qe = MonitoredQueryExecutionFactory.create(query, dataset,
 				collector);
 		ResultSet rs = qe.execSelect();
 		while (rs.hasNext()) {
@@ -60,7 +60,7 @@ public class PlannerEndpoint {
 		}
 		log.debug("results number: {}", rs.getRowNumber());
 
-		RoboProblem problem = new VRoboProblemBuilder(collector).getProblem();
+		RoboProblem problem = new RoboProblemBuilder(collector).getProblem();
 		List<Fact> facts = problem.getInitialState().getFacts();
 		log.debug("initial state: {} facts", facts.size());
 		RendererImpl r = new RendererImpl();

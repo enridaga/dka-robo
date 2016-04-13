@@ -7,12 +7,12 @@ import dkarobo.planner.RoboProblem;
 import dkarobo.planner.things.Symbols;
 import dkarobo.planner.things.Wildcard;
 
-public class VRoboProblemBuilder {
+public class RoboProblemBuilder {
 
-	private static final Logger log = LoggerFactory.getLogger(VRoboProblemBuilder.class);
+	private static final Logger log = LoggerFactory.getLogger(RoboProblemBuilder.class);
 	private RoboProblem problem;
 
-	public VRoboProblemBuilder(QuadCollector collector) {
+	public RoboProblemBuilder(QuadCollector collector) {
 		this.problem = new RoboProblem();
 		for (String[] t : collector.getTriples()) {
 			log.debug("{}",t);

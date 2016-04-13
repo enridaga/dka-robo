@@ -37,12 +37,12 @@ public class QueryTest {
 		String q = "SELECT (MAX(?O) as ?M) WHERE { GRAPH ?g { ?S <" + Vocabulary.NS + "hasHumidity> ?O . ?S <" + Vocabulary.NS + "hasTemperature> ?X } } ";
 		Dataset kb = DatasetFactory.createMem();//
 		RDFDataMgr.read(kb, getClass().getClassLoader().getResourceAsStream("./KB.txt"), Lang.NQ);
-		VQuadValidityProvider provider = new VQuadValidityComputer(Vocabulary.NS_GRAPH, System.currentTimeMillis());
-		final VInvalidQuadCollector collector = new VInvalidQuadCollector(provider);
+		QuadValidityProvider provider = new QuadValidityComputer(Vocabulary.NS_GRAPH, System.currentTimeMillis());
+		final InvalidQuadCollector collector = new InvalidQuadCollector(provider);
 		OpExecutorFactory customExecutorFactory = new OpExecutorFactory() {
 			@Override
 			public OpExecutor create(ExecutionContext execCxt) {
-				return new VOpExecutor(execCxt, collector);
+				return new MonitoredOpExecutor(execCxt, collector);
 			}
 		};
 
@@ -59,7 +59,7 @@ public class QueryTest {
 		l.info("res: {}", rs.getRowNumber());
 		ex.close();
 
-		VRoboProblemBuilder problemBuilder = new VRoboProblemBuilder(collector);
+		RoboProblemBuilder problemBuilder = new RoboProblemBuilder(collector);
 		RoboProblem problem = problemBuilder.getProblem();
 		List<Fact> facts = problem.getInitialState().getFacts();
 		for (Fact fa : facts) {
@@ -74,9 +74,9 @@ public class QueryTest {
 		// new DatasetImpl(ModelFactory.createDefaultModel());
 		RDFDataMgr.read(dataset, getClass().getClassLoader().getResourceAsStream("./KB.txt"), Lang.NQ);
 		
-		VQuadValidityProvider provider = new VQuadValidityComputer(Vocabulary.NS_GRAPH, System.currentTimeMillis());
-		final VInvalidQuadCollector collector = new VInvalidQuadCollector(provider);
-		QueryExecution qe = VQueryExecutionFactory.create(query, dataset, collector);
+		QuadValidityProvider provider = new QuadValidityComputer(Vocabulary.NS_GRAPH, System.currentTimeMillis());
+		final InvalidQuadCollector collector = new InvalidQuadCollector(provider);
+		QueryExecution qe = MonitoredQueryExecutionFactory.create(query, dataset, collector);
 		ResultSet rs = qe.execSelect();
 		while (rs.hasNext()) {
 			l.info("res: {}", rs.next());
@@ -84,7 +84,7 @@ public class QueryTest {
 		l.info("res: {}", rs.getRowNumber());
 		qe.close();
 
-		RoboProblem problem = new VRoboProblemBuilder(collector).getProblem();
+		RoboProblem problem = new RoboProblemBuilder(collector).getProblem();
 		List<Fact> facts = problem.getInitialState().getFacts();
 		for (Fact fa : facts) {
 			l.info("{}", new RendererImpl().append(fa).toString());

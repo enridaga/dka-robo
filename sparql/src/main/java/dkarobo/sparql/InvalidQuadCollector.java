@@ -7,12 +7,12 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class VInvalidQuadCollector implements VQuadListener, QuadCollector {
-	private static final Logger log = LoggerFactory.getLogger(VInvalidQuadCollector.class);
-	private VQuadValidityProvider provider;
+public class InvalidQuadCollector implements QuadListener, QuadCollector {
+	private static final Logger log = LoggerFactory.getLogger(InvalidQuadCollector.class);
+	private QuadValidityProvider provider;
 	private Set<String[]> invalid;
 
-	public VInvalidQuadCollector(VQuadValidityProvider provider) {
+	public InvalidQuadCollector(QuadValidityProvider provider) {
 		this.provider = provider;
 		this.invalid = new HashSet<String[]>();
 	}

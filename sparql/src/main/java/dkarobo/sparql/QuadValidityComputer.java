@@ -4,12 +4,12 @@ import java.util.Date;
 
 import org.apache.commons.lang3.time.DateUtils;
 
-public class VQuadValidityComputer implements VQuadValidityProvider {
+public class QuadValidityComputer implements QuadValidityProvider {
 
 	private String timeGraphNs;
 	private long nowMilliseconds;
 
-	public VQuadValidityComputer(String timeGraphNs, long nowMilliseconds) {
+	public QuadValidityComputer(String timeGraphNs, long nowMilliseconds) {
 		this.timeGraphNs = timeGraphNs;
 		this.nowMilliseconds = nowMilliseconds / 1000;
 	}

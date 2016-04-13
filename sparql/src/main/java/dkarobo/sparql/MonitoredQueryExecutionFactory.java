@@ -17,27 +17,30 @@ import org.apache.jena.sparql.util.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class VQueryExecutionFactory {
-	private static final Logger log = LoggerFactory.getLogger(VQueryExecutionFactory.class);
 
-	public static QueryExecution create(String query, Dataset dataset, VInvalidQuadCollector collector) {
+public class MonitoredQueryExecutionFactory {
+	
+	private static final Logger log = LoggerFactory.getLogger(MonitoredQueryExecutionFactory.class);
+
+	public static QueryExecution create(String query, Dataset dataset, QuadListener listener) {
 		Query q = QueryFactory.create(query);
-		return create(q, dataset, collector);
+		return create(q, dataset, listener);
 	}
 
-	public static QueryExecution create(String query, Model model, VInvalidQuadCollector provider) {
+	public static QueryExecution create(String query, Model model, QuadListener listener) {
 		Query q = QueryFactory.create(query);
-		return create(q, new DatasetImpl(model), provider);
+		return create(q, new DatasetImpl(model), listener);
 	}
 
-	public static QueryExecution create(Query query, Dataset dataset, final VInvalidQuadCollector provider) {
+	public static QueryExecution create(Query query, Dataset dataset, final QuadListener listener) {
 		log.trace("Executing 1 {}", query);
 		OpExecutorFactory customExecutorFactory = new OpExecutorFactory() {
 			@Override
 			public OpExecutor create(ExecutionContext execCxt) {
-				return new VOpExecutor(execCxt, provider);
+				return new MonitoredOpExecutor(execCxt, listener);
 			}
 		};
+		
 		// XXX This could be done better, as it would create a new context for
 		// each query, increasing the size of the QC map.
 		Context context = dataset.asDatasetGraph().getContext();
