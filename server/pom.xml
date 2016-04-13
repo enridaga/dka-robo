@@ -52,11 +52,11 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
-		<dependency>
+<!-- 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.6.6</version>
-		</dependency>
+		</dependency> -->
 
 		<dependency>
 			<groupId>org.apache.jena</groupId>
@@ -86,42 +86,31 @@
 			<groupId>dka-robo</groupId>
 			<artifactId>sparql</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.jena</groupId>
-			<artifactId>jena-base</artifactId>
-			<version>3.0.1</version>
-		</dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
+			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<!-- <version>2.4</version> -->
-				<configuration>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-					<archive>
-						<manifest>
-							<mainClass>dkarobo.server.cli.Main</mainClass>
-						</manifest>
-					</archive>
-					<finalName>robo-server-${project.version}</finalName>
-					<appendAssemblyId>false</appendAssemblyId>
-				</configuration>
+				<artifactId>maven-shade-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>make-assembly</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
+						<configuration>
+							<transformers>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<mainClass>dkarobo.server.cli.Main</mainClass>
+								</transformer>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+									<resource>META-INF/services/org.apache.jena.system.JenaSubsystemLifecycle</resource>
+								</transformer>
+							</transformers>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
-
 			<plugin>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
@@ -130,8 +119,8 @@
 					<scanIntervalSeconds>5</scanIntervalSeconds>
 					<systemProperties>
 						<systemProperty>
-							<name>log4j.configurationFile</name>
-							<value>${project.basedir}/src/test/resources/log4j.properties</value>
+							<name>log4j.configuration</name>
+							<value>file:./src/test/resources/log4j.properties</value>
 						</systemProperty>
 					</systemProperties>
 				</configuration>
