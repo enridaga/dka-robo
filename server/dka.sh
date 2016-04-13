@@ -1,5 +1,5 @@
 #!/bin/bash
-flags=""
+flags="-v"
 
 
 if [ $1 = "problem" ]; then
