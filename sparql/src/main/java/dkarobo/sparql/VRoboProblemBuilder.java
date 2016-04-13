@@ -1,58 +1,34 @@
 package dkarobo.sparql;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dkarobo.planner.RoboProblem;
 import dkarobo.planner.things.Symbols;
 import dkarobo.planner.things.Wildcard;
 
-public class VRoboProblemBuilder implements VQuadListener {
+public class VRoboProblemBuilder {
 
-	private long nowSeconds;
-	private String timeGraphNs;
+	private static final Logger log = LoggerFactory.getLogger(VRoboProblemBuilder.class);
 	private RoboProblem problem;
 
-	public VRoboProblemBuilder(String timeGraphNs) {
-		this(timeGraphNs, System.currentTimeMillis());
-
-	}
-
-	public VRoboProblemBuilder(String timeGraphNs, long mstimestamp) {
-		this.nowSeconds = mstimestamp / 1000;
-		this.timeGraphNs = timeGraphNs;
+	public VRoboProblemBuilder(QuadCollector collector) {
 		this.problem = new RoboProblem();
-	}
-
-	@Override
-	public void quad(String G, String S, String P, String O) {
-		if (!G.startsWith(timeGraphNs)) {
-			// ignore
-			return;
-		}
-		long validUntil = seconds(timeGraphNs);
-		long validity = validUntil - nowSeconds;
-		if (validity < 0) {
+		for (String[] t : collector.getTriples()) {
+			log.debug("{}",t);
 			// Invalid Quad
-			problem.onInitQuad(((Long) validity).intValue(), Symbols.aQuadResource(S), Symbols.aQuadProperty(P),
-					Symbols.aQuadResource(O));
+			String V = t[0];
+			String S = t[1];
+			String P = t[2];
+			String O = t[3];
+			// Set as invalid in the init state
+			problem.onInitQuad(Integer.parseInt(V), Symbols.aQuadResource(S), Symbols.aQuadProperty(P), Symbols.aQuadResource(O));
+			// Set as valid in goal (with any value)
 			problem.onGoalValidQuad(Symbols.aQuadResource(S), Symbols.aQuadProperty(P), Wildcard.it());
 		}
 	}
 
-	// private String timeGraph(long millisec) {
-	// return timeGraphNs + millisec;
-	// }
-
-	private long seconds(String graphName) {
-		if (graphName.startsWith(timeGraphNs)) {
-			try {
-				return Long.parseLong(graphName.substring(timeGraphNs.length()));
-			} catch (NumberFormatException e) {
-				// Not a time graph
-			}
-		}
-		return 0;
-	}
-
-	public RoboProblem getProblem(){
+	public RoboProblem getProblem() {
 		return problem;
 	}
 }

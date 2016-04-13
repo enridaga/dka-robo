@@ -23,14 +23,13 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFDataMgr;
-
 import org.apache.jena.query.Dataset;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.sparql.core.DatasetImpl;
 import org.apache.jena.vocabulary.RDF;
 
