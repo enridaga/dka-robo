@@ -37,7 +37,7 @@ public class QueryTest {
 		String q = "SELECT (MAX(?O) as ?M) WHERE { GRAPH ?g { ?S <" + Vocabulary.NS + "hasHumidity> ?O . ?S <" + Vocabulary.NS + "hasTemperature> ?X } } ";
 		Dataset kb = DatasetFactory.createMem();//
 		RDFDataMgr.read(kb, getClass().getClassLoader().getResourceAsStream("./KB.txt"), Lang.NQ);
-		QuadValidityProvider provider = new QuadValidityComputer(Vocabulary.NS_GRAPH, System.currentTimeMillis());
+		ValidityReader provider = new ExpirationTimestampInGraphName(Vocabulary.NS_GRAPH, System.currentTimeMillis());
 		final InvalidQuadCollector collector = new InvalidQuadCollector(provider);
 		OpExecutorFactory customExecutorFactory = new OpExecutorFactory() {
 			@Override
@@ -74,7 +74,7 @@ public class QueryTest {
 		// new DatasetImpl(ModelFactory.createDefaultModel());
 		RDFDataMgr.read(dataset, getClass().getClassLoader().getResourceAsStream("./KB.txt"), Lang.NQ);
 		
-		QuadValidityProvider provider = new QuadValidityComputer(Vocabulary.NS_GRAPH, System.currentTimeMillis());
+		ValidityReader provider = new ExpirationTimestampInGraphName(Vocabulary.NS_GRAPH, System.currentTimeMillis());
 		final InvalidQuadCollector collector = new InvalidQuadCollector(provider);
 		QueryExecution qe = MonitoredQueryExecutionFactory.create(query, dataset, collector);
 		ResultSet rs = qe.execSelect();

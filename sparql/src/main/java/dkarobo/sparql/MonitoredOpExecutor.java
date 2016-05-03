@@ -2,6 +2,7 @@ package dkarobo.sparql;
 
 import java.util.Iterator;
 
+import org.apache.jena.graph.Node;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.sparql.algebra.op.OpBGP;
 import org.apache.jena.sparql.algebra.op.OpGraph;
@@ -37,25 +38,25 @@ public class MonitoredOpExecutor extends OpExecutor {
 					Iterator<Triple> it = bp.iterator();
 					while(it.hasNext()){
 						Triple t = it.next();
-						String s = null;
-						String p = null;
-						String o = null;
+						Node s = null;
+						Node p = null;
+						Node o = null;
 						if(t.getSubject().isConcrete()){
-							s = t.getSubject().toString(true);
+							s = t.getSubject();
 						}else{
-							s = b.get(Var.alloc(t.getSubject())).toString(true);
+							s = b.get(Var.alloc(t.getSubject()));
 						}
 						if(t.getPredicate().isConcrete()){
-							p = t.getPredicate().toString(true);
+							p = t.getPredicate();
 						}else{
-							p = b.get(Var.alloc(t.getPredicate())).toString(true);
+							p = b.get(Var.alloc(t.getPredicate()));
 						}
 						if(t.getObject().isConcrete()){
-							o = t.getObject().toString(true);
+							o = t.getObject();
 						}else{
-							o = b.get(Var.alloc(t.getObject())).toString(true);
+							o = b.get(Var.alloc(t.getObject()));
 						}
-						quadListener.quad(g, s, p, o);
+						quadListener.quad(g, new Triple(s, p, o));
 					}
 					return b;
 				}

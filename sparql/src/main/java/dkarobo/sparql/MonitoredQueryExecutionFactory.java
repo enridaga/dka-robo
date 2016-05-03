@@ -33,7 +33,7 @@ public class MonitoredQueryExecutionFactory {
 	}
 
 	public static QueryExecution create(Query query, Dataset dataset, final QuadListener listener) {
-		log.trace("Executing 1 {}", query);
+		log.trace("Executing {}", query);
 		OpExecutorFactory customExecutorFactory = new OpExecutorFactory() {
 			@Override
 			public OpExecutor create(ExecutionContext execCxt) {
