@@ -17,6 +17,7 @@
 		<module>planner</module>
 		<module>sparql</module>
 		<module>server</module>
+		<module>bot</module>
 	</modules>
 
 
