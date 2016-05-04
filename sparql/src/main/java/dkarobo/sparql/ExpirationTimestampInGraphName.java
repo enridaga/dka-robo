@@ -20,7 +20,8 @@ public class ExpirationTimestampInGraphName implements ValidityReader {
 				// Not a time graph
 			}
 		}
-		return 0;
+		// Valid
+		return 100000;
 	}
 
 	@Override

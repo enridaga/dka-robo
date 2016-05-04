@@ -7,6 +7,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
@@ -43,22 +44,26 @@ public class DataEndpoint {
 	@Consumes("application/n-quads")
 	public Response put(InputStream data) {
 		log.trace("Calling PUT /data");
-		Dataset dataset = (Dataset) context.getAttribute(Application._ObjectDataset);
-		synchronized(dataset){
-			dataset.begin(ReadWrite.WRITE);
-			try {
-				RDFDataMgr.read(dataset, data, Lang.NQUADS);
-				dataset.commit();
-			} catch (Exception e) {
-				dataset.abort();
-				throw new RuntimeException("Cannot load data.");
-			}finally{
-				dataset.end();
+		try {
+			Dataset dataset = (Dataset) context.getAttribute(Application._ObjectDataset);
+			synchronized(dataset){
+				dataset.begin(ReadWrite.WRITE);
+				try {
+					RDFDataMgr.read(dataset, data, Lang.NQUADS);
+					dataset.commit();
+				} catch (Exception e) {
+					dataset.abort();
+					throw new RuntimeException("Cannot load data.");
+				}finally{
+					dataset.end();
+				}
 			}
+			//
+			DKAManager manager = (DKAManager) context.getAttribute(Application._ObjectMANAGER);
+			manager.reloadLocations(); // refresh locations if data has changed
+			return Response.ok().build();
+		} catch (Exception e) {
+			throw new WebApplicationException(e);
 		}
-		//
-		DKAManager manager = (DKAManager) context.getAttribute(Application._ObjectMANAGER);
-		manager.reloadLocations(); // refresh locations if data has changed
-		return Response.ok().build();
 	}
 }

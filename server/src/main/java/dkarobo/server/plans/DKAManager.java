@@ -10,6 +10,7 @@ import org.apache.jena.query.Dataset;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ReadWrite;
 import org.apache.jena.query.ResultSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,6 +77,9 @@ public class DKAManager {
 		ValidityReader provider = new ExpirationTimestampInGraphName(Vocabulary.NS_GRAPH, System.currentTimeMillis());
 		InvalidQuadCollector collector = new InvalidQuadCollector(provider);
 		QueryExecution qe = MonitoredQueryExecutionFactory.create(query, dataset, collector);
+		if(dataset.supportsTransactions()){
+			dataset.begin(ReadWrite.READ);
+		}
 		ResultSet rs = qe.execSelect();
 		while (rs.hasNext()) {
 			rs.next();
@@ -83,6 +87,9 @@ public class DKAManager {
 		log.debug("results number: {}", rs.getRowNumber());
 
 		RoboProblem problem = new RoboProblemBuilder(collector).getProblem();
+		if(dataset.supportsTransactions()){
+			dataset.end();
+		}
 		// Load locations
 		for (Entry<String, Coordinates> en : locations.entrySet()) {
 			problem.onInitQuad(Symbols.Forever, Symbols.aQuadResource(en.getKey()), Symbols.type, Symbols.Location);
@@ -97,6 +104,9 @@ public class DKAManager {
 		//
 		String q = "SELECT ?L ?X ?Y { graph <http://data.open.ac.uk/kmi/graph/static> { ?L a <http://data.open.ac.uk/kmi/robo/Location> ; <http://data.open.ac.uk/kmi/robo/xCoord> ?X ; <http://data.open.ac.uk/kmi/robo/yCoord> ?Y . }}";
 		QueryExecution qe = QueryExecutionFactory.create(q, dataset);
+		if(dataset.supportsTransactions()){
+			dataset.begin(ReadWrite.READ);
+		}
 		ResultSet rs = qe.execSelect();
 		log.debug("Locations? {}", rs.hasNext());
 		while (rs.hasNext()) {
@@ -107,6 +117,9 @@ public class DKAManager {
 			log.debug("Loading {} {} {}", new Object[] { location, X, Y });
 			Coordinates coord = Position.create(Float.parseFloat(X), Float.parseFloat(Y), 0);
 			locations.put(location, coord);
+		}
+		if(dataset.supportsTransactions()){
+			dataset.end();
 		}
 	}
 
@@ -154,7 +167,7 @@ public class DKAManager {
 		}
 
 		if (log.isDebugEnabled()) {
-			new ReportPrinter().print(System.out, planner);
+			ReportPrinter.print(System.out, planner);
 		}
 
 		return planner.getLastSearchReport().getPlan();
