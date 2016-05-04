@@ -14,7 +14,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dkarobo.server.plans.PlanningManager;
+import dkarobo.server.plans.DKAManager;
 import dkarobo.server.plans.PlansCache;
 
 public class Application extends ResourceConfig implements ServletContextListener {
@@ -66,7 +66,7 @@ public class Application extends ResourceConfig implements ServletContextListene
 			}
 		}
 
-		PlanningManager manager = new PlanningManager(dataset);
+		DKAManager manager = new DKAManager(dataset);
 		PlansCache cache = new PlansCache();
 		sce.getServletContext().setAttribute(_ObjectPLANSCACHE, cache);
 		sce.getServletContext().setAttribute(_ObjectMANAGER, manager);

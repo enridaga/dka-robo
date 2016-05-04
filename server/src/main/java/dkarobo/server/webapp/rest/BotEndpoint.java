@@ -24,7 +24,7 @@ import dkarobo.bot.Bot;
 import dkarobo.bot.BotViaRest;
 import dkarobo.bot.BusyBotException;
 import dkarobo.bot.DummyBot;
-import dkarobo.server.plans.PlanningManager;
+import dkarobo.server.plans.DKAManager;
 import dkarobo.server.plans.PlansCache;
 import dkarobo.server.webapp.Application;
 import harmony.core.api.operator.GroundAction;
@@ -50,16 +50,21 @@ public class BotEndpoint {
 		return (Bot) context.getAttribute(Application._ObjectBOT);
 	}
 
-	@Path("/whereAreYou")
+	@GET
+	@Path("/wru")
 	public Response whereAreYou() {
 		log.trace("Calling GET /whereAreYou");
 		return Response.ok(getBot().whereAreYou().toString()).build();
 	}
 
+	@GET
 	@Path("/setbot")
 	public Response setbot(@QueryParam("address") String address) {
 		log.trace("Calling GET /setbot");
 		try {
+			if ("dummy".equals(address)) {
+				return setdummybot();
+			}
 			context.setAttribute(Application._ObjectBOT, new BotViaRest(URI.create(address).toURL()));
 			return Response.ok().build();
 		} catch (MalformedURLException e) {
@@ -72,13 +77,12 @@ public class BotEndpoint {
 	 * 
 	 * @return
 	 */
-	@Path("/setdummybot")
 	public Response setdummybot() {
-		log.trace("Calling GET /setdummybot");
 		context.setAttribute(Application._ObjectBOT, new DummyBot(100, 100, 0));
 		return Response.ok().build();
 	}
 
+	@GET
 	@Path("/getbot")
 	public Response getbot() {
 		log.trace("Calling GET /getbot");
@@ -95,9 +99,16 @@ public class BotEndpoint {
 	public Response doing() {
 		return Response.ok(getBot().whatHaveYouDone()).build();
 	}
+	
+
+	@GET
+	@Path("/isbusy")
+	public Response isbusy() {
+		return Response.ok(getBot().isBusy()).build();
+	}
 
 	@DELETE
-	@Path("/delete")
+	@Path("/abort")
 	public Response abort() {
 		getBot().abort();
 		return Response.noContent().build();
@@ -115,7 +126,7 @@ public class BotEndpoint {
 		PlansCache cache = (PlansCache) context.getAttribute(Application._ObjectPLANSCACHE);
 		Plan plan;
 		if (!cache.isCached(query)) {
-			PlanningManager manager = (PlanningManager) context.getAttribute(Application._ObjectMANAGER);
+			DKAManager manager = (DKAManager) context.getAttribute(Application._ObjectMANAGER);
 			plan = manager.performPlanning(query, getBot().whereAreYou());
 		} else {
 			plan = cache.get(query);

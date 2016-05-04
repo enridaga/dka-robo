@@ -10,6 +10,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import org.slf4j.Logger;
@@ -17,7 +18,8 @@ import org.slf4j.LoggerFactory;
 
 import dkarobo.bot.Bot;
 import dkarobo.planner.RoboProblem;
-import dkarobo.server.plans.PlanningManager;
+import dkarobo.planner.utils.ReportPrinter;
+import dkarobo.server.plans.DKAManager;
 import dkarobo.server.plans.PlansCache;
 import dkarobo.server.webapp.Application;
 import harmony.core.api.fact.Fact;
@@ -45,8 +47,12 @@ public class PlannerEndpoint {
 	@Path("/problem")
 	public Response problem(@QueryParam("query") String query) {
 		log.trace("Calling GET /problem");
-		PlanningManager manager = (PlanningManager) context.getAttribute(Application._ObjectMANAGER);
-		RoboProblem problem = manager.getProblem(query);
+		DKAManager manager = (DKAManager) context.getAttribute(Application._ObjectMANAGER);
+		Bot bot = (Bot) context.getAttribute(Application._ObjectBOT);
+		if(bot == null){
+			return Response.status(Status.EXPECTATION_FAILED).entity("Bot is not available\n").build();
+		}
+		RoboProblem problem = manager.getProblem(query, bot.whereAreYou());
 		List<Fact> facts = problem.getInitialState().getFacts();
 		log.debug("initial state: {} facts", facts.size());
 		RendererImpl r = new RendererImpl();
@@ -61,8 +67,11 @@ public class PlannerEndpoint {
 	@Path("/plan")
 	public Response plan(@QueryParam("query") String query) {
 		log.trace("Calling GET /plan");
-		PlanningManager manager = (PlanningManager) context.getAttribute(Application._ObjectMANAGER);
+		DKAManager manager = (DKAManager) context.getAttribute(Application._ObjectMANAGER);
 		Bot bot = (Bot) context.getAttribute(Application._ObjectBOT);
+		if(bot == null){
+			return Response.status(Status.EXPECTATION_FAILED).entity("Bot is not available\n").build();
+		}
 		Plan plan = manager.performPlanning(query, bot.whereAreYou());
 		PlansCache cache = (PlansCache) context.getAttribute(Application._ObjectPLANSCACHE);
 		// caching the plan
@@ -71,12 +80,8 @@ public class PlannerEndpoint {
 		if (plan.size() == -1) {
 			return Response.noContent().build();
 		}
-		RendererImpl r = new RendererImpl();
-		for (GroundAction a : plan.getActions()) {
-			r.append(a.toString()).append("\n");
-		}
 
-		return Response.ok(r.toString()).build();
+		return Response.ok(ReportPrinter.toString(plan)).build();
 	}
 
 	@GET

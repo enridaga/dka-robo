@@ -19,6 +19,7 @@ import org.apache.jena.riot.RDFDataMgr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dkarobo.server.plans.DKAManager;
 import dkarobo.server.webapp.Application;
 
 @Path("/data")
@@ -55,6 +56,9 @@ public class DataEndpoint {
 				dataset.end();
 			}
 		}
+		//
+		DKAManager manager = (DKAManager) context.getAttribute(Application._ObjectMANAGER);
+		manager.reloadLocations(); // refresh locations if data has changed
 		return Response.ok().build();
 	}
 }

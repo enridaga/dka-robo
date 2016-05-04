@@ -3,10 +3,10 @@ package dkarobo.bot;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public class Position implements Coordinates {
-	private int X, Y, Z;
+	private float X, Y, Z;
 	private int hashCode;
 
-	private Position(int X, int Y, int Z) {
+	private Position(float X, float Y, float Z) {
 		this.X = X;
 		this.Y = Y;
 		this.Z = Z;
@@ -14,17 +14,17 @@ public class Position implements Coordinates {
 	}
 
 	@Override
-	public int getX() {
+	public float getX() {
 		return X;
 	}
 
 	@Override
-	public int getY() {
+	public float getY() {
 		return Y;
 	}
 
 	@Override
-	public int getZ() {
+	public float getZ() {
 		return Z;
 	}
 
@@ -56,15 +56,15 @@ public class Position implements Coordinates {
 		return new Position(0, 0, 0);
 	}
 
-	public final static Position shift(Position p, int amountX, int amountY, int amountZ) {
+	public final static Position shift(Position p, float amountX, float amountY, float amountZ) {
 		return new Position(p.getX() + amountX, p.getY() + amountY, p.getZ() + amountZ);
 	}
 
-	public final static Position shiftXY(Position p, int amountX, int amountY) {
+	public final static Position shiftXY(Position p, float amountX, float amountY) {
 		return new Position(p.getX() + amountX, p.getY() + amountY, p.getZ());
 	}
 
-	public static Coordinates create(int x2, int y2, int z2) {
+	public static Coordinates create(float x2, float y2, float z2) {
 		return new Position(x2, y2, z2);
 	}
 

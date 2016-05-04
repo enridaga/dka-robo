@@ -20,7 +20,7 @@ public class InvalidQuadCollector implements QuadListener, QuadCollector {
 
 	@Override
 	public void quad(String G, Triple t) {
-		log.trace("Scanning quad {} t", new Object[] { G, t });
+		log.trace("Scanning quad {} {}", new Object[] { G, t });
 		int validity = provider.elapsingSeconds(G, t);
 		if (validity < 0) {
 			log.trace(" - invalid quad");

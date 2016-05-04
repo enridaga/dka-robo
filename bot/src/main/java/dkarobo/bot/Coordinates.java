@@ -2,9 +2,9 @@ package dkarobo.bot;
 
 public interface Coordinates {
 
-	public int getX();
+	public float getX();
 
-	public int getY();
+	public float getY();
 
-	public int getZ();
+	public float getZ();
 }
