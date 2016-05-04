@@ -1,0 +1,8 @@
+NW,Room22,0.688,-1.77
+NW,Room20,1.51,-10.2
+NW,Activity2,6.89,-3.57
+NW,Activity3,7.99,-7.15
+NW,Activity4,5.97,-11.2
+NW,Activity5,6.19,-15.4
+NW,Podium,7.05,-29.3
+NW,MarkBucks,2.34,-31
