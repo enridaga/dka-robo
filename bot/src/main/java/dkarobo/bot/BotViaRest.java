@@ -49,10 +49,16 @@ public class BotViaRest implements Bot {
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	@Override
 	public String whatHaveYouDone() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public String toString() {
+		return new StringBuilder().append(getClass().getSimpleName()).append("[").append(webAddress.toString())
+				.append("]").toString();
 	}
 }

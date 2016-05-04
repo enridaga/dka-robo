@@ -18,17 +18,13 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dkarobo.planner.MoveCostProvider;
-import dkarobo.planner.RoboBestNode;
-import dkarobo.planner.RoboPlanner;
-import dkarobo.planner.RoboProblem;
-import dkarobo.planner.ValidityProvider;
 import dkarobo.planner.things.QuadResource;
 import dkarobo.planner.things.QuadResourceImpl;
 import dkarobo.planner.things.Validity;
@@ -187,7 +183,9 @@ public class PlannerTest {
 			c++;
 			StringBuilder sb = new StringBuilder();
 			sb.append(c).append("/").append(report.closedNodes().size());
-			System.out.println(sb.append(s).toString());
+			if(log.isDebugEnabled()){
+				log.debug(sb.append(s).toString());
+			}
 		}
 		return plans;
 	}
@@ -245,6 +243,12 @@ public class PlannerTest {
 		search();
 	}
 
+	/**
+	 * This test works but it takes more then a minute...
+	 * 
+	 * @throws NoSolutionException
+	 */
+	@Ignore
 	@Test
 	public void plan2() throws NoSolutionException {
 

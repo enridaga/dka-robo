@@ -14,9 +14,16 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dkarobo.server.plans.PlanningManager;
+import dkarobo.server.plans.PlansCache;
+
 public class Application extends ResourceConfig implements ServletContextListener {
 	private static final Logger log = LoggerFactory.getLogger(Application.class);
-
+	// Objects in context
+	public final static String _ObjectMANAGER = "dka-manager";
+	public final static String _ObjectPLANSCACHE = "dka-plans-cache";
+	public final static String _ObjectBOT = "dka-bot";
+	// Parameters
 	public final static String _ParamDATA = "dka-data";
 	public final static String _ParamLOAD = "dka-load";
 	public final static String _ParamINIT = "dka-init";
@@ -26,11 +33,11 @@ public class Application extends ResourceConfig implements ServletContextListene
 	public Application() {
 		packages("dkarobo.server.webapp.rest");
 	}
-	
+
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
 		log.info("Initializing context.");
-		
+
 		log.debug("Setting up database");
 		Dataset dataset;
 		String dataString = sce.getServletContext().getInitParameter(_ParamDATA);
@@ -58,6 +65,11 @@ public class Application extends ResourceConfig implements ServletContextListene
 				throw new RuntimeException("Cannot load data.");
 			}
 		}
+
+		PlanningManager manager = new PlanningManager(dataset);
+		PlansCache cache = new PlansCache();
+		sce.getServletContext().setAttribute(_ObjectPLANSCACHE, cache);
+		sce.getServletContext().setAttribute(_ObjectMANAGER, manager);
 	}
 
 	@Override

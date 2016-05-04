@@ -89,4 +89,9 @@ public class DummyBot implements Bot {
 			this.plan = null;
 		}
 	}
+	
+	@Override
+	public String toString() {
+		return "DummyBot";
+	}
 }

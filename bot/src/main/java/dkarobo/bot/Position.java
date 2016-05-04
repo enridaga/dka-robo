@@ -68,4 +68,8 @@ public class Position implements Coordinates {
 		return new Position(x2, y2, z2);
 	}
 
+	public String toString() {
+		return new StringBuilder().append("XYZ[").append(getX()).append(',').append(getY()).append(',').append(getZ())
+				.append(']').toString();
+	}
 }

@@ -12,21 +12,17 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.jena.query.Dataset;
-import org.apache.jena.query.QueryExecution;
-import org.apache.jena.query.ResultSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dkarobo.bot.Bot;
 import dkarobo.planner.RoboProblem;
+import dkarobo.server.plans.PlanningManager;
+import dkarobo.server.plans.PlansCache;
 import dkarobo.server.webapp.Application;
-import dkarobo.sparql.InvalidQuadCollector;
-import dkarobo.sparql.QuadValidityComputer;
-import dkarobo.sparql.QuadValidityProvider;
-import dkarobo.sparql.MonitoredQueryExecutionFactory;
-import dkarobo.sparql.RoboProblemBuilder;
-import dkarobo.sparql.Vocabulary;
 import harmony.core.api.fact.Fact;
+import harmony.core.api.operator.GroundAction;
+import harmony.core.api.plan.Plan;
 import harmony.core.impl.renderer.RendererImpl;
 
 @Path("/planner")
@@ -47,27 +43,63 @@ public class PlannerEndpoint {
 
 	@GET
 	@Path("/problem")
-	public Response get(@QueryParam("query") String query) {
+	public Response problem(@QueryParam("query") String query) {
 		log.trace("Calling GET /problem");
-		Dataset dataset = (Dataset) context.getAttribute(Application._ObjectDataset);
-		QuadValidityProvider provider = new QuadValidityComputer(Vocabulary.NS_GRAPH, System.currentTimeMillis());
-		InvalidQuadCollector collector = new InvalidQuadCollector(provider);
-		QueryExecution qe = MonitoredQueryExecutionFactory.create(query, dataset,
-				collector);
-		ResultSet rs = qe.execSelect();
-		while (rs.hasNext()) {
-			rs.next();
-		}
-		log.debug("results number: {}", rs.getRowNumber());
-
-		RoboProblem problem = new RoboProblemBuilder(collector).getProblem();
+		PlanningManager manager = (PlanningManager) context.getAttribute(Application._ObjectMANAGER);
+		RoboProblem problem = manager.getProblem(query);
 		List<Fact> facts = problem.getInitialState().getFacts();
 		log.debug("initial state: {} facts", facts.size());
 		RendererImpl r = new RendererImpl();
 		for (Fact fa : facts) {
 			r.append(fa).append("\n");
 		}
-		qe.close();
+
+		return Response.ok(r.toString()).build();
+	}
+
+	@GET
+	@Path("/plan")
+	public Response plan(@QueryParam("query") String query) {
+		log.trace("Calling GET /plan");
+		PlanningManager manager = (PlanningManager) context.getAttribute(Application._ObjectMANAGER);
+		Bot bot = (Bot) context.getAttribute(Application._ObjectBOT);
+		Plan plan = manager.performPlanning(query, bot.whereAreYou());
+		PlansCache cache = (PlansCache) context.getAttribute(Application._ObjectPLANSCACHE);
+		// caching the plan
+		cache.put(query, plan);
+		log.debug("Plan: {} actions", plan.size());
+		if (plan.size() == -1) {
+			return Response.noContent().build();
+		}
+		RendererImpl r = new RendererImpl();
+		for (GroundAction a : plan.getActions()) {
+			r.append(a.toString()).append("\n");
+		}
+
+		return Response.ok(r.toString()).build();
+	}
+
+	@GET
+	@Path("/plan-cached")
+	public Response planCached(@QueryParam("query") String query) {
+		log.trace("Calling GET /plan-cached");
+		PlansCache cache = (PlansCache) context.getAttribute(Application._ObjectPLANSCACHE);
+		Plan plan = cache.get(query);
+
+		log.debug("Plan: {} ", plan);
+
+		if (plan == null) {
+			return Response.status(404).build();
+		}
+		
+		if (plan.size() == -1) {
+			return Response.noContent().build();
+		}
+		
+		RendererImpl r = new RendererImpl();
+		for (GroundAction a : plan.getActions()) {
+			r.append(a.toString()).append("\n");
+		}
 
 		return Response.ok(r.toString()).build();
 	}
