@@ -5,6 +5,7 @@
 		<groupId>dka-robo</groupId>
 		<version>0.0.1-SNAPSHOT</version>
 		<artifactId>parent</artifactId>
+		<relativePath>../parent</relativePath>
 	</parent>
 	<artifactId>bot</artifactId>
 
