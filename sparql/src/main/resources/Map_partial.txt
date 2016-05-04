@@ -4,5 +4,6 @@ NW,Activity2,6.89,-3.57
 NW,Activity3,7.99,-7.15
 NW,Activity4,5.97,-11.2
 NW,Activity5,6.19,-15.4
+NW,Activity6,0.43,-19.7
 NW,Podium,7.05,-29.3
 NW,MarkBucks,2.34,-31
