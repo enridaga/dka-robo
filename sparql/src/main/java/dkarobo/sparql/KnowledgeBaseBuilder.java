@@ -61,7 +61,7 @@ public class KnowledgeBaseBuilder {
 	}
 
 	private Model buildObservedDefaults(String location) {
-		Property[] o = new Property[] { hasTemperature, hasHumidity, hasWiFiSignal, hasPeopleCount };
+		Property[] o = new Property[] { hasTemperature, hasHumidity, hasWiFiSignal};
 		Model model = ModelFactory.createDefaultModel();
 		Resource area_r = model.createResource(NS_LOCATION + location);
 		for (Property p : o) {
