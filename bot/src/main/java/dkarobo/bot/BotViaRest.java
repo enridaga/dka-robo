@@ -79,7 +79,7 @@ public class BotViaRest implements Bot {
 		sendPlan(sb.toString());
 	}
 
-	private void sendPlan(final String plan) {
+	private void sendPlan(final String plan) throws BusyBotException {
 		try {
 			String parameters = "p=" + URLEncoder.encode(plan, "UTF-8");
 			log.debug("Plan: {}", parameters);
@@ -93,6 +93,10 @@ public class BotViaRest implements Bot {
 			conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
 			conn.getOutputStream().write(postDataBytes);
 			String line;
+			int code = conn.getResponseCode();
+			if (code == 406) {
+				throw new BusyBotException();
+			}
 			BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			while ((line = reader.readLine()) != null) {
 				log.error("Response from Bot: {}", line);
@@ -114,17 +118,13 @@ public class BotViaRest implements Bot {
 	}
 
 	@Override
-	public String whatHaveYouDone() {
-		
+	public String whatHaveYouDone() throws IOException {
 		try {
 			URLConnection connection = new URL(webAddress + "/do").openConnection();
-			String response = IOUtils.toString(connection.getInputStream());
+			return IOUtils.toString(connection.getInputStream());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new IOException(e);
 		}
-		
-		return null;
 	}
 
 	@Override

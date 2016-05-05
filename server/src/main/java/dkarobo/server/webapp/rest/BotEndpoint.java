@@ -1,5 +1,6 @@
 package dkarobo.server.webapp.rest;
 
+import java.io.IOException;
 import java.net.URI;
 
 import javax.servlet.ServletContext;
@@ -102,20 +103,31 @@ public class BotEndpoint {
 	@GET
 	@Path("/doing")
 	public Response doing() {
-		return Response.ok(getBot().whatHaveYouDone()).build();
+		try {
+			return Response.ok(getBot().whatHaveYouDone()).build();
+		} catch (IOException e) {
+			throw new WebApplicationException(e);
+		}
 	}
-	
 
 	@GET
 	@Path("/isbusy")
 	public Response isbusy() {
-		return Response.ok(getBot().isBusy()).build();
+		try {
+			return Response.ok(getBot().isBusy()).build();
+		} catch (IOException e) {
+			throw new WebApplicationException(e);
+		}
 	}
 
 	@DELETE
 	@Path("/abort")
 	public Response abort() {
-		getBot().abort();
+		try {
+			getBot().abort();
+		} catch (IOException e) {
+			throw new WebApplicationException(e);
+		}
 		return Response.noContent().build();
 	}
 
@@ -124,22 +136,30 @@ public class BotEndpoint {
 	public Response send(@QueryParam("query") String query) {
 
 		// If it is busy, say picche
-		if (getBot().isBusy()) {
-			return Response.status(Status.CONFLICT).build();
+		try {
+			if (getBot().isBusy()) {
+				return Response.status(Status.CONFLICT).build();
+			}
+		} catch (IOException e1) {
+			throw new WebApplicationException(e1);
 		}
 
 		DKAManager manager = (DKAManager) context.getAttribute(Application._ObjectMANAGER);
 		PlansCache cache = (PlansCache) context.getAttribute(Application._ObjectPLANSCACHE);
 		Plan plan;
 		if (!cache.isCached(query)) {
-			plan = manager.performPlanning(query, getBot().whereAreYou());
+			try {
+				plan = manager.performPlanning(query, getBot().whereAreYou());
+			} catch (IOException e) {
+				throw new WebApplicationException(e);
+			}
 		} else {
 			plan = cache.get(query);
 		}
 		try {
 			String[] theplan = manager.toBotJsonPlan(plan);
 			getBot().sendPlan(theplan);
-		} catch (BusyBotException e) {
+		} catch (BusyBotException | IOException e) {
 			log.error("This should not happen", e);
 			return Response.status(Status.EXPECTATION_FAILED).build();
 		}

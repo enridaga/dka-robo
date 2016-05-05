@@ -8,7 +8,6 @@ import static dkarobo.sparql.Vocabulary.NS_GRAPH;
 import static dkarobo.sparql.Vocabulary.NS_LOCATION;
 import static dkarobo.sparql.Vocabulary.hasHumidity;
 import static dkarobo.sparql.Vocabulary.hasLocation;
-import static dkarobo.sparql.Vocabulary.hasPeopleCount;
 import static dkarobo.sparql.Vocabulary.hasTemperature;
 import static dkarobo.sparql.Vocabulary.hasWiFiSignal;
 import static dkarobo.sparql.Vocabulary.subAreaOf;

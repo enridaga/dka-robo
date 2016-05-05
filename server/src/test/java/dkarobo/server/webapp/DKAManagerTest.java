@@ -52,7 +52,7 @@ public class DKAManagerTest {
 				"select * where {graph ?g { <http://data.open.ac.uk/kmi/location/Podium> <http://data.open.ac.uk/kmi/robo/hasTemperature> ?t}}",
 				Position.create(5, 8, 0));
 		ReportPrinter.print(System.out, plan);
-		BotViaRest bvr = new BotViaRest("http://localhost:5000/");
+		BotViaRest bvr = new BotViaRest("http://localhost/~ed4565/dkarobot/");
 		bvr.sendPlan(manager.toBotJsonPlan(plan));
 		
 	}
