@@ -25,6 +25,7 @@ public class BotViaRestTest {
 		System.out.println(bot.whereAreYou());
 	}
 
+	@Ignore
 	@Test
 	public void planAndPing() {
 		Assert.assertTrue(!bot.isBusy());
