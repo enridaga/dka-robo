@@ -1,5 +1,6 @@
 package dkarobo.server.plans;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
@@ -21,6 +22,11 @@ import dkarobo.planner.MoveCostProvider;
 import dkarobo.planner.RoboPlanner;
 import dkarobo.planner.RoboProblem;
 import dkarobo.planner.ValidityProvider;
+import dkarobo.planner.operator.Move;
+import dkarobo.planner.operator.Observe;
+import dkarobo.planner.operator.Observe.CheckWiFi;
+import dkarobo.planner.operator.Observe.Humidity;
+import dkarobo.planner.operator.Observe.Temperature;
 import dkarobo.planner.things.QuadResource;
 import dkarobo.planner.things.QuadResourceImpl;
 import dkarobo.planner.things.Symbols;
@@ -34,9 +40,11 @@ import dkarobo.sparql.RoboProblemBuilder;
 import dkarobo.sparql.ValidityReader;
 import dkarobo.sparql.Vocabulary;
 import harmony.core.api.operator.GroundAction;
+import harmony.core.api.operator.Operator;
 import harmony.core.api.plan.Plan;
 import harmony.core.api.thing.Thing;
 import harmony.planner.NoSolutionException;
+import net.minidev.json.JSONObject;
 
 public class DKAManager {
 	private static Logger log = LoggerFactory.getLogger(DKAManager.class);
@@ -68,8 +76,8 @@ public class DKAManager {
 			}
 		};
 	}
-	
-	public void reloadLocations(){
+
+	public void reloadLocations() {
 		loadLocations();
 	}
 
@@ -77,7 +85,7 @@ public class DKAManager {
 		ValidityReader provider = new ExpirationTimestampInGraphName(Vocabulary.NS_GRAPH, System.currentTimeMillis());
 		InvalidQuadCollector collector = new InvalidQuadCollector(provider);
 		QueryExecution qe = MonitoredQueryExecutionFactory.create(query, dataset, collector);
-		if(dataset.supportsTransactions()){
+		if (dataset.supportsTransactions()) {
 			dataset.begin(ReadWrite.READ);
 		}
 		ResultSet rs = qe.execSelect();
@@ -87,7 +95,7 @@ public class DKAManager {
 		log.debug("results number: {}", rs.getRowNumber());
 
 		RoboProblem problem = new RoboProblemBuilder(collector).getProblem();
-		if(dataset.supportsTransactions()){
+		if (dataset.supportsTransactions()) {
 			dataset.end();
 		}
 		// Load locations
@@ -104,7 +112,7 @@ public class DKAManager {
 		//
 		String q = "SELECT ?L ?X ?Y { graph <http://data.open.ac.uk/kmi/graph/static> { ?L a <http://data.open.ac.uk/kmi/robo/Location> ; <http://data.open.ac.uk/kmi/robo/xCoord> ?X ; <http://data.open.ac.uk/kmi/robo/yCoord> ?Y . }}";
 		QueryExecution qe = QueryExecutionFactory.create(q, dataset);
-		if(dataset.supportsTransactions()){
+		if (dataset.supportsTransactions()) {
 			dataset.begin(ReadWrite.READ);
 		}
 		ResultSet rs = qe.execSelect();
@@ -118,7 +126,7 @@ public class DKAManager {
 			Coordinates coord = Position.create(Float.parseFloat(X), Float.parseFloat(Y), 0);
 			locations.put(location, coord);
 		}
-		if(dataset.supportsTransactions()){
+		if (dataset.supportsTransactions()) {
 			dataset.end();
 		}
 	}
@@ -134,7 +142,7 @@ public class DKAManager {
 			float q = loc.getValue().getY();
 			float d = (float) Math.sqrt(Math.pow(x - z, 2) + Math.pow(q - y, 2));
 			log.debug("Distance btw {},{}/{},{} = {}", new Object[] { x, y, z, q, d });
-			if(distance > d){
+			if (distance > d) {
 				distance = d;
 				location = loc.getKey();
 			}
@@ -171,5 +179,45 @@ public class DKAManager {
 		}
 
 		return planner.getLastSearchReport().getPlan();
+	}
+
+	/**
+	 * Returns an ordered array of actions in the form of Json Objects.
+	 * 
+	 * @param plan
+	 * @return
+	 */
+	public String[] toBotJsonPlan(Plan plan) {
+		List<String> actions = new ArrayList<String>();
+		for (GroundAction ga : plan.getActions()) {
+			Operator operator = ga.getAction().operator();
+			JSONObject o = new JSONObject();
+			if (operator instanceof Move) {
+				QuadResource qr = (QuadResource) ga.parameters()[1];
+				String location = qr.getSignature();
+				Coordinates coo = locations.get(location);
+				if (coo == null)
+					throw new RuntimeException("Unknown location: " + location);
+				o.put("name", "goto");
+				o.put("x", coo.getX());
+				o.put("y", coo.getY());
+				o.put("t", coo.getZ());
+			} else if (operator instanceof Observe) {
+				if (operator instanceof Humidity) {
+					o.put("name", "read_humidity");
+				} else if (operator instanceof Temperature) {
+					o.put("name", "read_temperature");
+				} else if (operator instanceof CheckWiFi) {
+					o.put("name", "sniff_wifi");
+					o.put("iface", "wlan0");
+				} else {
+					throw new RuntimeException("Unsupported Action Operator");
+				}
+			} else {
+				throw new RuntimeException("Unsupported Action Operator");
+			}
+			actions.add(o.toJSONString());
+		}
+		return actions.toArray(new String[actions.size()]);
 	}
 }

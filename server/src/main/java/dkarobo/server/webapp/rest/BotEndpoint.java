@@ -1,9 +1,6 @@
 package dkarobo.server.webapp.rest;
 
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.DELETE;
@@ -11,6 +8,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
@@ -27,7 +25,6 @@ import dkarobo.bot.DummyBot;
 import dkarobo.server.plans.DKAManager;
 import dkarobo.server.plans.PlansCache;
 import dkarobo.server.webapp.Application;
-import harmony.core.api.operator.GroundAction;
 import harmony.core.api.plan.Plan;
 
 @Path("/bot")
@@ -47,14 +44,22 @@ public class BotEndpoint {
 	protected UriInfo requestUri;
 
 	private Bot getBot() {
-		return (Bot) context.getAttribute(Application._ObjectBOT);
+		try {
+			return (Bot) context.getAttribute(Application._ObjectBOT);
+		} catch (Exception e) {
+			throw new WebApplicationException(e);
+		}
 	}
 
 	@GET
 	@Path("/wru")
 	public Response whereAreYou() {
 		log.trace("Calling GET /whereAreYou");
-		return Response.ok(getBot().whereAreYou().toString()).build();
+		try {
+			return Response.ok(getBot().whereAreYou().toString()).build();
+		} catch (Exception e) {
+			throw new WebApplicationException(e);
+		}
 	}
 
 	@GET
@@ -65,10 +70,10 @@ public class BotEndpoint {
 			if ("dummy".equals(address)) {
 				return setdummybot();
 			}
-			context.setAttribute(Application._ObjectBOT, new BotViaRest(URI.create(address).toURL()));
+			context.setAttribute(Application._ObjectBOT, new BotViaRest(address));
 			return Response.ok().build();
-		} catch (MalformedURLException e) {
-			return Response.serverError().entity(e).build();
+		} catch (Exception e) {
+			throw new WebApplicationException(e);
 		}
 	}
 
@@ -123,16 +128,17 @@ public class BotEndpoint {
 			return Response.status(Status.CONFLICT).build();
 		}
 
+		DKAManager manager = (DKAManager) context.getAttribute(Application._ObjectMANAGER);
 		PlansCache cache = (PlansCache) context.getAttribute(Application._ObjectPLANSCACHE);
 		Plan plan;
 		if (!cache.isCached(query)) {
-			DKAManager manager = (DKAManager) context.getAttribute(Application._ObjectMANAGER);
 			plan = manager.performPlanning(query, getBot().whereAreYou());
 		} else {
 			plan = cache.get(query);
 		}
 		try {
-			getBot().sendPlan(toExecutablePlan(plan));
+			String[] theplan = manager.toBotJsonPlan(plan);
+			getBot().sendPlan(theplan);
 		} catch (BusyBotException e) {
 			log.error("This should not happen", e);
 			return Response.status(Status.EXPECTATION_FAILED).build();
@@ -140,11 +146,4 @@ public class BotEndpoint {
 		return Response.created(requestUri.resolve(URI.create("doing"))).build();
 	}
 
-	private String[] toExecutablePlan(Plan plan) {
-		List<String> actions = new ArrayList<String>();
-		for (GroundAction ga : plan.getActions()) {
-			actions.add(ga.toString());
-		}
-		return actions.toArray(new String[actions.size()]);
-	}
 }

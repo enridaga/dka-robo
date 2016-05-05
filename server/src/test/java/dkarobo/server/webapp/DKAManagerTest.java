@@ -6,8 +6,11 @@ import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
+import dkarobo.bot.BotViaRest;
+import dkarobo.bot.BusyBotException;
 import dkarobo.bot.Position;
 import dkarobo.planner.utils.ReportPrinter;
 import dkarobo.server.plans.DKAManager;
@@ -39,6 +42,18 @@ public class DKAManagerTest {
 	public void testLocations() {
 		DKAManager manager = new DKAManager(dataset);
 		manager.toLocation(Position.create((float) 1, -10, 0));
+	}
+	
+	@Ignore
+	@Test
+	public void testSendPlan() throws BusyBotException{
+		DKAManager manager = new DKAManager(dataset);
+		Plan plan = manager.performPlanning(
+				"select * where {graph ?g { <http://data.open.ac.uk/kmi/location/Podium> <http://data.open.ac.uk/kmi/robo/hasTemperature> ?t}}",
+				Position.create(5, 8, 0));
+		ReportPrinter.print(System.out, plan);
+		BotViaRest bvr = new BotViaRest("http://localhost:5000/");
+		bvr.sendPlan(manager.toBotJsonPlan(plan));
 		
 	}
 }
