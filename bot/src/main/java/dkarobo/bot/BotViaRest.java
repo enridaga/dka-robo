@@ -51,9 +51,9 @@ public class BotViaRest implements Bot {
 	}
 
 	@Override
-	public boolean isBusy() {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean isBusy() throws IOException {
+		HttpURLConnection connection = (HttpURLConnection) new URL(webAddress + "/do").openConnection();
+		return connection.getResponseCode() == 200;
 	}
 
 	@Override
@@ -113,8 +113,15 @@ public class BotViaRest implements Bot {
 	}
 
 	@Override
-	public void abort() {
+	public void abort() throws MalformedURLException, IOException {
 		lastPlan = null;
+		HttpURLConnection conn = (HttpURLConnection) new URL(webAddress + "/do").openConnection();
+		conn.setDoOutput(true);
+		conn.setRequestMethod("DELETE");
+		if (conn.getResponseCode() != 204) {
+			throw new IOException(conn.getResponseMessage());
+		}
+
 	}
 
 	@Override
