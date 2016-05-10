@@ -28,7 +28,11 @@ public class BotViaRestTest {
 		System.out.println(bot.whereAreYou());
 	}
 
+<<<<<<< HEAD
 	
+=======
+	@Ignore
+>>>>>>> c461ed26cd3482ff1f77ac488941318ae365d557
 	@Test
 	public void planAndPing() throws IOException {
 		
