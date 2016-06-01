@@ -5,7 +5,9 @@ import java.net.URI;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
@@ -19,10 +21,15 @@ import javax.ws.rs.core.UriInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import dkarobo.bot.Bot;
 import dkarobo.bot.BotViaRest;
 import dkarobo.bot.BusyBotException;
+import dkarobo.bot.Coordinates;
 import dkarobo.bot.DummyBot;
+import dkarobo.bot.Position;
 import dkarobo.server.plans.DKAManager;
 import dkarobo.server.plans.PlansCache;
 import dkarobo.server.webapp.Application;
@@ -55,7 +62,7 @@ public class BotEndpoint {
 	@GET
 	@Path("/wru")
 	public Response whereAreYou() {
-		log.trace("Calling GET /whereAreYou");
+		log.trace("Calling GET /wru");
 		try {
 			return Response.ok(getBot().whereAreYou().toString()).build();
 		} catch (Exception e) {
@@ -66,7 +73,7 @@ public class BotEndpoint {
 	@GET
 	@Path("/setbot")
 	public Response setbot(@QueryParam("address") String address) {
-		log.trace("Calling GET /setbot");
+		log.trace("Calling GET /setbot: {}", address);
 		try {
 			if ("dummy".equals(address)) {
 				return setdummybot();
@@ -166,4 +173,18 @@ public class BotEndpoint {
 		return Response.created(requestUri.resolve(URI.create("doing"))).build();
 	}
 
+	@POST
+	@Path("/write")
+	public Response write(@FormParam("d") String data) {
+		log.debug("POST /bot/write {}", data);
+		JsonObject object = (JsonObject) new JsonParser().parse(data);
+		Coordinates coord =  Position.create( object.get("x").getAsFloat(), object.get("y").getAsFloat(), object.get("theta").getAsFloat());
+		DKAManager manager = (DKAManager) context.getAttribute(Application._ObjectMANAGER);
+		boolean ok = manager.roboWrites(coord, object.get("field").getAsString(), object.get("value").getAsString());
+		if(ok){
+			return Response.ok().build();
+		}else{
+			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
 }

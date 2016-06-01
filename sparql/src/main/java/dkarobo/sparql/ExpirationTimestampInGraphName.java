@@ -9,10 +9,10 @@ public class ExpirationTimestampInGraphName implements ValidityReader {
 
 	public ExpirationTimestampInGraphName(String graphNs, long nowMilliseconds) {
 		this.timeGraphNs = graphNs;
-		this.nowMilliseconds = nowMilliseconds / 1000;
+		this.nowMilliseconds = nowMilliseconds;
 	}
 
-	private long seconds(String graphName) {
+	private long milliseconds(String graphName) {
 		if (graphName.startsWith(timeGraphNs)) {
 			try {
 				return Long.parseLong(graphName.substring(timeGraphNs.length()));
@@ -21,12 +21,12 @@ public class ExpirationTimestampInGraphName implements ValidityReader {
 			}
 		}
 		// Valid
-		return 100000;
+		return 1000000000;// nowMilliseconds + 1000000;
 	}
 
 	@Override
 	public int elapsingSeconds(String g, Triple t) {
-		long millisec = seconds(timeGraphNs);
+		long millisec = milliseconds(g);
 		return ((Long) ((millisec - nowMilliseconds) / 1000)).intValue();
 	}
 }

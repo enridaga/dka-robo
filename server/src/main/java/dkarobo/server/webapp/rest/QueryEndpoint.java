@@ -24,6 +24,7 @@ import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.QueryParseException;
+import org.apache.jena.query.ReadWrite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,18 +86,23 @@ public class QueryEndpoint {
 
 	public Object execute(Query q) {
 		Dataset dataset = (Dataset) context.getAttribute(Application._ObjectDataset);
-		QueryExecution qe = QueryExecutionFactory.create(q, dataset);
+		try  {
+			dataset.begin(ReadWrite.READ);
+			QueryExecution qe = QueryExecutionFactory.create(q, dataset);
 
-		if (q.isSelectType()) {
-			return qe.execSelect();
-		} else if (q.isConstructType()) {
-			return qe.execConstruct();
-		} else if (q.isAskType()) {
-			return qe.execAsk();
-		} else if (q.isDescribeType()) {
-			return qe.execDescribe();
-		} else {
-			throw new RuntimeException("Unsupported query type: " + q.getQueryType());
+			if (q.isSelectType()) {
+				return qe.execSelect();
+			} else if (q.isConstructType()) {
+				return qe.execConstruct();
+			} else if (q.isAskType()) {
+				return qe.execAsk();
+			} else if (q.isDescribeType()) {
+				return qe.execDescribe();
+			} else {
+				throw new RuntimeException("Unsupported query type: " + q.getQueryType());
+			}
+		} finally{
+			dataset.end();
 		}
 	}
 }

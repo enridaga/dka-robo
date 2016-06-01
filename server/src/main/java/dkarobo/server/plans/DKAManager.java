@@ -10,9 +10,11 @@ import org.apache.commons.collections4.bidimap.DualLinkedHashBidiMap;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.QueryParseException;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ReadWrite;
 import org.apache.jena.query.ResultSet;
+import org.apache.jena.update.UpdateAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +29,7 @@ import dkarobo.planner.operator.Observe;
 import dkarobo.planner.operator.Observe.CheckWiFi;
 import dkarobo.planner.operator.Observe.Humidity;
 import dkarobo.planner.operator.Observe.Temperature;
+import dkarobo.planner.things.QuadPropertyImpl;
 import dkarobo.planner.things.QuadResource;
 import dkarobo.planner.things.QuadResourceImpl;
 import dkarobo.planner.things.Symbols;
@@ -103,7 +106,7 @@ public class DKAManager {
 			problem.onInitQuad(Symbols.Forever, Symbols.aQuadResource(en.getKey()), Symbols.type, Symbols.Location);
 		}
 		// Set start location
-		problem.onInitAt(toLocation(location));
+		problem.onInitAt(new QuadResourceImpl(toLocation(location)));
 		return problem;
 	}
 
@@ -131,7 +134,13 @@ public class DKAManager {
 		}
 	}
 
-	public QuadResource toLocation(Coordinates coordinates) {
+	/**
+	 * Logic: find the nearest known place.
+	 * 
+	 * @param coordinates
+	 * @return
+	 */
+	public String toLocation(Coordinates coordinates) {
 		String location = null; // will be the closest
 		float x = coordinates.getX();
 		float y = coordinates.getY();
@@ -148,7 +157,7 @@ public class DKAManager {
 			}
 		}
 		log.debug("{} : {} ({})", new Object[] { coordinates, locations.get(location), location });
-		return new QuadResourceImpl(location);
+		return location;
 	}
 
 	public Plan performPlanning(String query, Coordinates location) {
@@ -219,5 +228,46 @@ public class DKAManager {
 			actions.add(o.toJSONString());
 		}
 		return actions.toArray(new String[actions.size()]);
+	}
+
+	public String fieldToProperty(String roboField) {
+		if (roboField.equals("humidity")) {
+			return Vocabulary.hasHumidity.getURI();
+		} else if (roboField.equals("wifi")) {
+			return Vocabulary.hasWiFiSignal.getURI();
+		} else if (roboField.equals("temperature")) {
+			return Vocabulary.hasTemperature.getURI();
+		} else {
+			throw new UnsupportedOperationException("unknown field " + roboField);
+		}
+	}
+
+	public boolean roboWrites(Coordinates location, String field, String value) {
+		String place = toLocation(location);
+		String property = fieldToProperty(field);
+		Thing s = new QuadResourceImpl(place);
+		Thing p = new QuadPropertyImpl(property);
+		Thing v = new QuadResourceImpl(value);
+		Validity validity = validityProvider.getValidity(s, p, v);
+		int seconds = validity.asInteger();
+		int milliseconds = seconds * 1000;
+		long timestamp = System.currentTimeMillis();
+		long validUntil = timestamp + (long) milliseconds;
+		String graph = Vocabulary.NS_GRAPH + validUntil;
+		String update = "DELETE { GRAPH ?ANY { <" + place + "> <" + property + "> <" + value + "> } } "
+				+ " INSERT { GRAPH <" + graph + "> { <" + place + "> <" + property + "> <" + value + "> } } "
+				+ "WHERE  { GRAPH ?ANY { <" + place + "> <" + property + "> <" + value + "> } } ";
+		try {
+			dataset.begin(ReadWrite.WRITE);
+			UpdateAction.parseExecute(update, dataset);
+			dataset.end();
+			return true;
+		} catch (QueryParseException qpe) {
+			log.error("FAILED", qpe);
+			return false;
+		} catch (Exception e) {
+			log.error("", e);
+			return false;
+		}
 	}
 }

@@ -1,7 +1,10 @@
 package dkarobo.planner.things;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
+/**
+ * Validity of something in number of seconds
+ *
+ */
 public class ValidityImpl implements Validity {
 	private int validity = 0;
 	private int hashCode;

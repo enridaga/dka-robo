@@ -33,6 +33,7 @@ public class BotViaRest implements Bot {
 	@Override
 	public Coordinates whereAreYou() {
 		try {
+			log.trace("Calling {}{}", getWebAddress() , "/whereareyou");
 			URLConnection connection = new URL(webAddress + "/whereareyou").openConnection();
 			String json = IOUtils.toString(connection.getInputStream());
 			log.trace("{}", json);
@@ -84,7 +85,7 @@ public class BotViaRest implements Bot {
 			String parameters = "p=" + URLEncoder.encode(plan, "UTF-8");
 			log.debug("Plan: {}", parameters);
 			byte[] postDataBytes = parameters.toString().getBytes("UTF-8");
-			URL url = new URL(webAddress + "do");
+			URL url = new URL(webAddress + "/do");
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setDoOutput(true);
 			conn.setRequestMethod("POST");
@@ -99,7 +100,7 @@ public class BotViaRest implements Bot {
 			}
 			BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			while ((line = reader.readLine()) != null) {
-				log.error("Response from Bot: {}", line);
+				log.debug("Response from Bot: {}", line);
 			}
 			reader.close();
 		} catch (IOException e) {

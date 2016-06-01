@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.QueryParseException;
+import org.apache.jena.query.ReadWrite;
 import org.apache.jena.update.UpdateAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +51,9 @@ public class UpdateEndpoint {
 	public Response perform(String update) {
 		try {
 			Dataset dataset = (Dataset) context.getAttribute(Application._ObjectDataset);
+			dataset.begin(ReadWrite.WRITE);
 			UpdateAction.parseExecute(update, dataset);
+			dataset.end();
 			return Response.ok().build();
 		} catch(QueryParseException qpe){
 			return Response.status(Status.BAD_REQUEST).entity(qpe.getLocalizedMessage()).build();
