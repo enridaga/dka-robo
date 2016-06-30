@@ -104,6 +104,7 @@ public class BotEndpoint {
 			Bot b = (Bot) bot;
 			return Response.ok(b.toString()).build();
 		}
+		
 		return Response.status(404).build();
 	}
 
