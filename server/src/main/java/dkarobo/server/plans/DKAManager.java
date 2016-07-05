@@ -64,8 +64,18 @@ public class DKAManager {
 
 			@Override
 			public int validityDecreaseFactor(String A, String B) {
-				// TODO Always the same cost
-				return 10;
+				//  Always the same cost
+				// XXX Assuming A and B are locations with coordinates**?
+				
+				
+//				String[] xCoord = A.split(",");
+//				String[] yCoord = B.split(",");
+//				double squ_distance = Math.pow(Integer.parseInt(xCoord[1]) - Integer.parseInt(xCoord[0]),2) +
+//						Math.pow(Integer.parseInt(yCoord[1]) - Integer.parseInt(yCoord[0]),2);
+				
+				double distance = Math.sqrt( (Math.pow(  locations.get(A).getY() - locations.get(A).getX() ,2 )  +   Math.pow(  locations.get(B).getY() - locations.get(B).getX() ,2 )) );
+				
+				return (int) distance;
 			}
 		};
 

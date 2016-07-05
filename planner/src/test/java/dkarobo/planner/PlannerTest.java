@@ -80,6 +80,7 @@ public class PlannerTest {
 					// as the Move action has a guard in the precodnitions to
 					// avoid to
 					// move from/to things that are not locations
+					
 					int diff = Integer.parseInt(from.substring(1))
 							- Integer.parseInt(to.substring(1));
 					diff = Math.abs(diff);

@@ -90,7 +90,7 @@ public class Move extends RoboOperator {
 	@Override
 	public Effect getEffect(final Thing... T) throws OperatorException {
 		final CompositeEffect composite = new CompositeEffectImpl();
-		// Remove the Roboto from that location
+		// Remove the Robot from that location
 		composite.append(new BasicEffect().toRemove(new BasicFact(At, T[0])));
 		final int cost = momentProvider.validityDecreaseFactor(T[0].getSignature(), T[1].getSignature());
 		composite.append(new DecreaseValidityEffect(cost));
