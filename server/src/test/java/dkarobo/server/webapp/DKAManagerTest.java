@@ -25,7 +25,9 @@ public class DKAManagerTest {
 		dataset = DatasetFactory.create();
 		RDFDataMgr.read(dataset, getClass().getClassLoader().getResourceAsStream("KB_partial.nq"), Lang.NQUADS);
 	}
-
+	
+	
+	@Ignore
 	@Test
 	public void test() {
 		DKAManager manager = new DKAManager(dataset);
@@ -44,15 +46,16 @@ public class DKAManagerTest {
 		manager.toLocation(Position.create((float) 1, -10, 0));
 	}
 	
-	@Ignore
+//	@Ignore
 	@Test
 	public void testSendPlan() throws BusyBotException{
 		DKAManager manager = new DKAManager(dataset);
 		Plan plan = manager.performPlanning(
-				"select * where {graph ?g { <http://data.open.ac.uk/kmi/location/Podium> <http://data.open.ac.uk/kmi/robo/hasTemperature> ?t}}",
+				"select * where {graph ?g { <http://data.open.ac.uk/kmi/location/MarkBucks> <http://data.open.ac.uk/kmi/robo/hasTemperature> ?t.}} ",
+//				+ "FILTER contains(str(?activity), 'Activity') . }}",
 				Position.create(5, 8, 0));
 		ReportPrinter.print(System.out, plan);
-		BotViaRest bvr = new BotViaRest("http://localhost/~ed4565/dkarobot/");
+		BotViaRest bvr = new BotViaRest("http://137.108.112.211:5000");
 		bvr.sendPlan(manager.toBotJsonPlan(plan));
 		
 	}

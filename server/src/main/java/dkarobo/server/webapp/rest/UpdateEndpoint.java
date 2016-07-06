@@ -50,16 +50,29 @@ public class UpdateEndpoint {
 
 	public Response perform(String update) {
 		try {
+			
 			Dataset dataset = (Dataset) context.getAttribute(Application._ObjectDataset);
-			dataset.begin(ReadWrite.WRITE);
-			UpdateAction.parseExecute(update, dataset);
-			dataset.end();
-			return Response.ok().build();
-		} catch(QueryParseException qpe){
-			return Response.status(Status.BAD_REQUEST).entity(qpe.getLocalizedMessage()).build();
-		} catch (Exception e) {
+			try{
+				log.debug("Perform update.");
+				dataset.begin(ReadWrite.WRITE);
+		
+				UpdateAction.parseExecute(update, dataset);
+		
+				log.debug("Perform commit.");
+				dataset.commit();
+
+				return Response.ok().build();
+			} catch(QueryParseException qpe){
+				log.debug("Perform abort.");
+				dataset.abort();
+				return Response.status(Status.BAD_REQUEST).entity(qpe.getLocalizedMessage()).build();
+			} finally{
+				log.debug("Perform close.");
+				dataset.end();
+			}
+		}catch (Exception e) {
 			log.error("", e);
 			return Response.serverError().build();
-		}
+		} 
 	}
 }

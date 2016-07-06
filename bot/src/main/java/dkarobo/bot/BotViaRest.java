@@ -83,7 +83,7 @@ public class BotViaRest implements Bot {
 	private void sendPlan(final String plan) throws BusyBotException {
 		try {
 			String parameters = "p=" + URLEncoder.encode(plan, "UTF-8");
-			log.debug("Plan: {}", parameters);
+			log.debug("Plan: {}", plan ) ; //parameters);
 			byte[] postDataBytes = parameters.toString().getBytes("UTF-8");
 			URL url = new URL(webAddress + "/do");
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();

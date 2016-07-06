@@ -65,16 +65,13 @@ public class DKAManager {
 			@Override
 			public int validityDecreaseFactor(String A, String B) {
 				//  Always the same cost
-				// XXX Assuming A and B are locations with coordinates**?
+				//  A and B are locations with coordinates
+				if (locations.get(A) == null || locations.get(B) == null  ){
+//					log.trace("{} or {} was null", A, B);
+					return 0;
+				} 
 				
-				
-//				String[] xCoord = A.split(",");
-//				String[] yCoord = B.split(",");
-//				double squ_distance = Math.pow(Integer.parseInt(xCoord[1]) - Integer.parseInt(xCoord[0]),2) +
-//						Math.pow(Integer.parseInt(yCoord[1]) - Integer.parseInt(yCoord[0]),2);
-				
-				double distance = Math.sqrt( (Math.pow(  locations.get(A).getY() - locations.get(A).getX() ,2 )  +   Math.pow(  locations.get(B).getY() - locations.get(B).getX() ,2 )) );
-				
+				double distance =Math.sqrt( (Math.pow(  locations.get(A).getY() - locations.get(A).getX() ,2 )  +   Math.pow(  locations.get(B).getY() - locations.get(B).getX() ,2 )) );
 				return (int) distance;
 			}
 		};
@@ -156,11 +153,13 @@ public class DKAManager {
 		float y = coordinates.getY();
 		float distance = 10000; // a large number
 		for (Entry<String, Coordinates> loc : locations.entrySet()) {
-			// compute distance
-			float z = loc.getValue().getX();
-			float q = loc.getValue().getY();
+			// compute distance between A (current coord) and any other location (B)
+			float z = loc.getValue().getX(); // B coordX
+			float q = loc.getValue().getY(); // B coordY
 			float d = (float) Math.sqrt(Math.pow(x - z, 2) + Math.pow(q - y, 2));
-			log.debug("Distance btw {},{}/{},{} = {}", new Object[] { x, y, z, q, d });
+			
+			
+			log.trace("Distance btw ({},{}) and <{}> ({},{}) = {}", new Object[] { x, y, loc.getKey(), z, q, d });
 			if (distance > d) {
 				distance = d;
 				location = loc.getKey();
@@ -253,6 +252,7 @@ public class DKAManager {
 	}
 
 	public boolean roboWrites(Coordinates location, String field, String value) {
+		System.out.println(location.getX()+" = "+location.getY());
 		String place = toLocation(location);
 		String property = fieldToProperty(field);
 		Thing s = new QuadResourceImpl(place);
@@ -267,6 +267,8 @@ public class DKAManager {
 		String update = "DELETE { GRAPH ?ANY { <" + place + "> <" + property + "> <" + value + "> } } "
 				+ " INSERT { GRAPH <" + graph + "> { <" + place + "> <" + property + "> <" + value + "> } } "
 				+ "WHERE  { GRAPH ?ANY { <" + place + "> <" + property + "> <" + value + "> } } ";
+		
+		log.info("Update g={}, place={}, prop={}, val={}", new Object[]{graph,place,property,value});
 		try {
 			dataset.begin(ReadWrite.WRITE);
 			UpdateAction.parseExecute(update, dataset);
