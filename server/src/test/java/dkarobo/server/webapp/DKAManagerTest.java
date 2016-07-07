@@ -39,7 +39,7 @@ public class DKAManagerTest {
 	}
 	
 
-
+	@Ignore
 	@Test
 	public void testLocations() {
 		DKAManager manager = new DKAManager(dataset);
