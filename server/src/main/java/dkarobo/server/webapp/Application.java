@@ -41,6 +41,7 @@ public class Application extends ResourceConfig implements ServletContextListene
 		log.debug("Setting up database");
 		Dataset dataset;
 		String dataString = sce.getServletContext().getInitParameter(_ParamDATA);
+		log.debug("Datastring? {}", dataString);
 		if (dataString == null) {
 			throw new RuntimeException("Cannot setup database. Missing init parameter: " + _ParamDATA);
 		}
@@ -56,6 +57,7 @@ public class Application extends ResourceConfig implements ServletContextListene
 			throw new RuntimeException("Cannot setup database. Not enough permissions on folder " + data);
 		}
 		String paramLOAD = sce.getServletContext().getInitParameter(_ParamLOAD);
+		log.debug("Load? param={}", paramLOAD);
 		if (paramLOAD != null && !paramLOAD.isEmpty()) {
 			File load = new File(paramLOAD);
 			log.debug("Loading data from {}", load);

@@ -62,7 +62,7 @@
 	</context-param>
 	<context-param>
 		<param-name>dka-load</param-name>
-		<param-value></param-value>
+		<param-value>./KB_partial.nq</param-value>
 	</context-param>
 
 	<servlet-mapping>

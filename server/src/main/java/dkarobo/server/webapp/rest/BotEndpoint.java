@@ -181,9 +181,12 @@ public class BotEndpoint {
 		JsonObject object = (JsonObject) new JsonParser().parse(data);
 		Coordinates coord =  Position.create( object.get("x").getAsFloat(), object.get("y").getAsFloat(), object.get("theta").getAsFloat());
 		DKAManager manager = (DKAManager) context.getAttribute(Application._ObjectMANAGER);
-		System.out.println(data+" "+ coord+" "+ object.get("field").getAsString()+" "+object.get("value").getAsString());
+//		manager.reloadLocations();
+		log.debug("{} {} {} {}", data+" "+ coord+" "+ object.get("field").getAsString()+" "+object.get("value").getAsString());
 		boolean ok = manager.roboWrites(coord, object.get("field").getAsString(), object.get("value").getAsString());
 		if(ok){
+			log.debug("OK");
+			
 			return Response.ok().build();
 		}else{
 			return Response.status(Status.INTERNAL_SERVER_ERROR).build();

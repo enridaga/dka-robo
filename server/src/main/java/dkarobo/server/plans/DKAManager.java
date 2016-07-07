@@ -152,6 +152,7 @@ public class DKAManager {
 		float x = coordinates.getX();
 		float y = coordinates.getY();
 		float distance = 10000; // a large number
+
 		for (Entry<String, Coordinates> loc : locations.entrySet()) {
 			// compute distance between A (current coord) and any other location (B)
 			float z = loc.getValue().getX(); // B coordX
@@ -165,7 +166,7 @@ public class DKAManager {
 				location = loc.getKey();
 			}
 		}
-		log.debug("{} : {} ({})", new Object[] { coordinates, locations.get(location), location });
+		log.debug("Closest? {} : {} ({})", new Object[] { coordinates, locations.get(location), location });
 		return location;
 	}
 
@@ -252,7 +253,7 @@ public class DKAManager {
 	}
 
 	public boolean roboWrites(Coordinates location, String field, String value) {
-		System.out.println(location.getX()+" = "+location.getY());
+		log.debug("Coord ({},{})", location.getX(), location.getY());
 		String place = toLocation(location);
 		String property = fieldToProperty(field);
 		Thing s = new QuadResourceImpl(place);
@@ -264,22 +265,31 @@ public class DKAManager {
 		long timestamp = System.currentTimeMillis();
 		long validUntil = timestamp + (long) milliseconds;
 		String graph = Vocabulary.NS_GRAPH + validUntil;
-		String update = "DELETE { GRAPH ?ANY { <" + place + "> <" + property + "> <" + value + "> } } "
-				+ " INSERT { GRAPH <" + graph + "> { <" + place + "> <" + property + "> <" + value + "> } } "
-				+ "WHERE  { GRAPH ?ANY { <" + place + "> <" + property + "> <" + value + "> } } ";
+		String update = "DELETE { GRAPH ?ANY { <" + place + "> <" + property + "> ?t } } "
+				+ " INSERT { GRAPH <" + graph + "> { <" + place + "> <" + property + "> \"" + value + "\" } } " // XXX 
+				+ "WHERE  { GRAPH ?ANY { <" + place + "> <" + property + "> ?t } } ";
 		
 		log.info("Update g={}, place={}, prop={}, val={}", new Object[]{graph,place,property,value});
 		try {
 			dataset.begin(ReadWrite.WRITE);
+			log.info("{}",update);
 			UpdateAction.parseExecute(update, dataset);
-			dataset.end();
+			dataset.commit();
+
+			log.debug("OK");
 			return true;
 		} catch (QueryParseException qpe) {
 			log.error("FAILED", qpe);
+			dataset.abort();
 			return false;
 		} catch (Exception e) {
 			log.error("", e);
+			dataset.abort();
+
 			return false;
+		} finally {
+			dataset.end();
+			
 		}
 	}
 }
