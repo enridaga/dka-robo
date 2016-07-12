@@ -153,6 +153,9 @@ public class QueryTest {
 		System.out.println(matchingRules);
 		System.out.println(bestMatchingRule+" "+validityBestMatch);
 		
+		// return this
+		System.out.println("Will expire at"+ validityBestMatch+System.currentTimeMillis());
+		
 	}
 
 	
