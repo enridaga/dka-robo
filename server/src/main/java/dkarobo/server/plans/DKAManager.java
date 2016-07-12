@@ -1,22 +1,47 @@
 package dkarobo.server.plans;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualLinkedHashBidiMap;
+import org.apache.commons.io.IOUtils;
+import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.query.Dataset;
+import org.apache.jena.query.DatasetFactory;
+import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.QueryParseException;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ReadWrite;
 import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.Literal;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.sparql.core.DatasetGraph;
+import org.apache.jena.sparql.core.DatasetGraphSimpleMem;
+import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.update.UpdateAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonPath;
 
 import dkarobo.bot.Coordinates;
 import dkarobo.bot.Position;
@@ -57,34 +82,123 @@ public class DKAManager {
 	private MoveCostProvider moveCostProvider;
 	private ValidityProvider validityProvider;
 
+	private Map<String, Integer> rules;
+	
 	public DKAManager(Dataset dataset) {
+		
+		// rules
+		this.loadRules();
+		
 		this.dataset = dataset;
 		this.loadLocations();
 		this.moveCostProvider = new MoveCostProvider() {
 
 			@Override
 			public int validityDecreaseFactor(String A, String B) {
-				//  Always the same cost
+
 				//  A and B are locations with coordinates
 				if (locations.get(A) == null || locations.get(B) == null  ){
 //					log.trace("{} or {} was null", A, B);
 					return 0;
 				} 
 				
-				double distance =Math.sqrt( (Math.pow(  locations.get(A).getY() - locations.get(A).getX() ,2 )  +   Math.pow(  locations.get(B).getY() - locations.get(B).getX() ,2 )) );
+				double distance = Math.sqrt( (Math.pow(  locations.get(A).getY() - locations.get(A).getX() ,2 )  +   Math.pow(  locations.get(B).getY() - locations.get(B).getX() ,2 )) );
 				return (int) distance;
 			}
 		};
 
 		this.validityProvider = new ValidityProvider() {
 
+			
+			// TODO put here implementing class
 			@Override
 			public Validity getValidity(Thing S, Thing P, Thing O) {
-				// TODO Estimate the validity of this triple, once it is
-				// acquired.
-				return new ValidityImpl(100);
+//				// Estimate the validity of this triple, once it is
+//				// acquired.
+				String bestMatchingRule = "";
+				int validity = 1000000;
+				
+				for ( String rule : rules.keySet()){
+					
+					// prendo la parte statica dal database
+					try{
+					dataset.begin(ReadWrite.READ);
+					Model model = dataset.getNamedModel(Vocabulary.GRAPH_FOREVER);
+					Model triple = ModelFactory.createDefaultModel();
+					Model toQuery = ModelFactory.createUnion(triple, model);
+					
+					Resource sbj = triple.createResource(S.getSignature());
+					Property prop =  triple.createProperty(P.getSignature());
+					Literal obj = triple.createTypedLiteral(O.getSignature());
+					triple.add(model.createLiteralStatement(sbj,prop,obj));
+					
+					// create query
+					String q = "ASK {" + rule + "} ";
+					Query query = QueryFactory.create(q);	
+					QueryExecution qe = QueryExecutionFactory.create(query, toQuery);
+					
+					
+					boolean rs = qe.execAsk();
+					
+					if (rs){	
+						if (rules.get(rule) < validity ){
+							bestMatchingRule = rule;
+							validity = rules.get(rule) ;
+						} // get the most specific
+						// what if they are the same?
+					} // else? 
+					
+					qe.close();
+					
+					}catch(Exception e){
+						log.error("",e);
+						dataset.abort();
+					}finally{
+						dataset.end();
+					}
+				}
+				
+
+				if (bestMatchingRule.equals("") ){ // XXX what if?
+					log.warn("no matching rule for <{}> <{}> \"{}\"?", new Object[]{  S.getSignature(), P.getSignature(), O.getSignature()} );
+					// not sure this could happen
+					return new ValidityImpl(500);
+				}
+				
+				int tripleValidityInSeconds =  rules.get(bestMatchingRule); //System.currentTimeMillis() + ;
+//				log.debug(" {} matches <{}> <{}> \"{}\" {}", new Object[]{ bestMatchingRule, S.getSignature(), P.getSignature(), O.getSignature(), rules.get(bestMatchingRule)});
+//							 
+//				int tripleValidityInSeconds = 100;
+				// return this
+				return new ValidityImpl(tripleValidityInSeconds);
 			}
 		};
+	}
+
+	private void loadRules() {
+		
+//		String json = IOUtils.toString(connection.getInputStream());
+//		log.trace("{}", json);
+//		Object document = Configuration.defaultConfiguration().jsonProvider().parse(json);
+//		String x = JsonPath.read(document, "$.current_position.x");
+//		String y = JsonPath.read(document, "$.current_position.y");
+//		String z = JsonPath.read(document, "$.current_position.theta");
+//		JsonObject object = (JsonObject) new JsonParser().parse(data);
+		
+		String  filename = "rules.csv"; //XXX change this
+		this.rules = new HashMap<String, Integer>();
+		try {
+			
+			List<String> lines = IOUtils.readLines(new FileInputStream(new File (filename)));
+			
+			for (String line : lines  ){
+				this.rules.put(line.split(";")[0],Integer.parseInt(line.split(";")[1].replace("\"", "")));
+			}
+		} catch ( IOException e) {
+			log.error("File {} not found",new File(filename).getAbsolutePath());	
+		}
+		log.debug("Rules? {} ({})", !this.rules.isEmpty(), this.rules.size());
+		
 	}
 
 	public void reloadLocations() {
@@ -180,6 +294,8 @@ public class DKAManager {
 		try {
 			planner.search(problem);
 		} catch (NoSolutionException e) {
+			
+			log.debug("No solution");
 			return new Plan() {
 				@Override
 				public int size() {
@@ -266,7 +382,7 @@ public class DKAManager {
 		long validUntil = timestamp + (long) milliseconds;
 		String graph = Vocabulary.NS_GRAPH + validUntil;
 		String update = "DELETE { GRAPH ?ANY { <" + place + "> <" + property + "> ?t } } "
-				+ " INSERT { GRAPH <" + graph + "> { <" + place + "> <" + property + "> \"" + value + "\" } } " // XXX 
+				+ " INSERT { GRAPH <" + graph + "> { <" + place + "> <" + property + "> \"" + value + "\" } } " 
 				+ "WHERE  { GRAPH ?ANY { <" + place + "> <" + property + "> ?t } } ";
 		
 		log.info("Update g={}, place={}, prop={}, val={}", new Object[]{graph,place,property,value});

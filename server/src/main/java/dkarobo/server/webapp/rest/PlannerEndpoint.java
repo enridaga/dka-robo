@@ -89,6 +89,7 @@ public class PlannerEndpoint {
 
 			return Response.ok(ReportPrinter.toString(plan)).build();
 		} catch (Exception e) {
+			log.error("",e);
 			throw new WebApplicationException(e);
 		}
 	}
