@@ -1,0 +1,10 @@
+?x ?p ?y;1000
+?x <http://data.open.ac.uk/kmi/robo/hasHumidity> ?y;300
+?x <http://data.open.ac.uk/kmi/robo/hasTemperature> ?y;300
+<http://data.open.ac.uk/kmi/location/MarkBucks> <http://data.open.ac.uk/kmi/robo/hasTemperature> ?y;180
+<http://data.open.ac.uk/kmi/location/Podium> <http://data.open.ac.uk/kmi/robo/hasTemperature> ?y;180
+<http://data.open.ac.uk/kmi/location/Room22> <http://data.open.ac.uk/kmi/robo/hasTemperature> ?y;60
+?x <http://data.open.ac.uk/kmi/robo/hasWiFiSignal> ?y;300
+?x <http://data.open.ac.uk/kmi/robo/hasPeopleCount> ?y;300
+<http://data.open.ac.uk/kmi/robo/Room22> <http://data.open.ac.uk/kmi/robo/hasPeopleCount> ?y;120
+<http://data.open.ac.uk/kmi/robo/Podium> <http://data.open.ac.uk/kmi/robo/hasPeopleCount> ?y;600
