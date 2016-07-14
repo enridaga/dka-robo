@@ -7,7 +7,7 @@ public class SinglePointsMapCostProvider implements MoveCostProvider {
 
 	private int speed;
 	private int meter;
-	private Map<String, Integer[]> coordinates = new HashMap<String, Integer[]>();
+	private Map<String, Double[]> coordinates = new HashMap<String, Double[]>();
 
 	public void setMeterIs(int length) {
 		meter = length;
@@ -17,16 +17,16 @@ public class SinglePointsMapCostProvider implements MoveCostProvider {
 		this.speed = metersInSeconds;
 	}
 
-	public void addCoordinates(String location, int X, int Y) {
-		coordinates.put(location, new Integer[] { X, Y });
+	public void addCoordinates(String location, double X, double Y) {
+		coordinates.put(location, new Double[] { X, Y });
 	}
 
 	@Override
 	public int validityDecreaseFactor(String from, String to) {
-		int x1;
-		int y1;
-		int x2;
-		int y2;
+		double x1;
+		double y1;
+		double x2;
+		double y2;
 		try {
 			x1 = coordinates.get(from)[0];
 			y1 = coordinates.get(from)[1];
