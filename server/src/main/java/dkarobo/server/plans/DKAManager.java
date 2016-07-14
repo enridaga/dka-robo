@@ -13,9 +13,7 @@ import java.util.Map.Entry;
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualLinkedHashBidiMap;
 import org.apache.commons.io.IOUtils;
-import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.query.Dataset;
-import org.apache.jena.query.DatasetFactory;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
@@ -29,29 +27,24 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFDataMgr;
-import org.apache.jena.sparql.core.DatasetGraph;
-import org.apache.jena.sparql.core.DatasetGraphSimpleMem;
-import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.update.UpdateAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.JsonPath;
+
+
 
 import dkarobo.bot.Coordinates;
 import dkarobo.bot.Position;
 import dkarobo.planner.MoveCostProvider;
 import dkarobo.planner.RoboPlanner;
 import dkarobo.planner.RoboProblem;
+import dkarobo.planner.StageMoveCostProvider;
 import dkarobo.planner.ValidityProvider;
 import dkarobo.planner.operator.Move;
 import dkarobo.planner.operator.Observe;
 import dkarobo.planner.operator.Observe.CheckWiFi;
+import dkarobo.planner.operator.Observe.CountPeople;
 import dkarobo.planner.operator.Observe.Humidity;
 import dkarobo.planner.operator.Observe.Temperature;
 import dkarobo.planner.things.QuadPropertyImpl;
@@ -90,22 +83,11 @@ public class DKAManager {
 		this.loadRules();
 		
 		this.dataset = dataset;
+		this.moveCostProvider = new StageMoveCostProvider();
+		((StageMoveCostProvider) this.moveCostProvider).setSpeed(0.3);
+		
 		this.loadLocations();
-		this.moveCostProvider = new MoveCostProvider() {
-
-			@Override
-			public int validityDecreaseFactor(String A, String B) {
-
-				//  A and B are locations with coordinates
-				if (locations.get(A) == null || locations.get(B) == null  ){
-//					log.trace("{} or {} was null", A, B);
-					return 0;
-				} 
-				
-				double distance = Math.sqrt( (Math.pow(  locations.get(A).getY() - locations.get(A).getX() ,2 )  +   Math.pow(  locations.get(B).getY() - locations.get(B).getX() ,2 )) );
-				return (int) distance;
-			}
-		};
+		
 
 		this.validityProvider = new ValidityProvider() {
 
@@ -249,6 +231,7 @@ public class DKAManager {
 			log.debug("Loading {} {} {}", new Object[] { location, X, Y });
 			Coordinates coord = Position.create(Float.parseFloat(X), Float.parseFloat(Y), 0);
 			locations.put(location, coord);
+			((StageMoveCostProvider) moveCostProvider).addCoordinates(location,  Double.parseDouble(X), Double.parseDouble(Y) );
 		}
 		if (dataset.supportsTransactions()) {
 			dataset.end();
@@ -340,7 +323,9 @@ public class DKAManager {
 			} else if (operator instanceof Observe) {
 				if (operator instanceof Humidity) {
 					o.put("name", "read_humidity");
-				} else if (operator instanceof Temperature) {
+				} else if (operator instanceof CountPeople) {
+					o.put("name", "count_people");
+				}else if (operator instanceof Temperature) {
 					o.put("name", "read_temperature");
 				} else if (operator instanceof CheckWiFi) {
 					o.put("name", "sniff_wifi");
@@ -363,7 +348,11 @@ public class DKAManager {
 			return Vocabulary.hasWiFiSignal.getURI();
 		} else if (roboField.equals("temperature")) {
 			return Vocabulary.hasTemperature.getURI();
-		} else {
+		} 
+		else if (roboField.equals("count_people")){
+			return Vocabulary.hasPeopleCount.getURI();// TODO check
+		}
+		else {
 			throw new UnsupportedOperationException("unknown field " + roboField);
 		}
 	}
