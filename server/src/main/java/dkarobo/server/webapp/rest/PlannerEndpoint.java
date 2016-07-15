@@ -86,7 +86,7 @@ public class PlannerEndpoint {
 			if (plan.size() == -1) {
 				return Response.noContent().build();
 			}
-
+			
 			return Response.ok(ReportPrinter.toString(plan)).build();
 		} catch (Exception e) {
 			log.error("",e);

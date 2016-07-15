@@ -30,10 +30,12 @@ public class ReportPrinter {
 		sb.append(" ");
 		for (Node a : ((BacktracePlan) p).getPath()) {
 			if (!a.isRoot()) {
+				sb.append("Action: ");
 				sb.append(new RendererImpl().append(a.getAction().getAction()).toString());
 			}
-			sb.append("[").append(RoboBestNode.computeMinValidity(a) + RoboBestNode.computeAvgValidity(a))
-					.append("] / ");
+//			sb.append("[").append(RoboBestNode.computeMinValidity(a) + RoboBestNode.computeAvgValidity(a))
+//			.append("] \n ");
+			sb.append("\n");
 		}
 		return sb.toString();
 	}
@@ -62,5 +64,9 @@ public class ReportPrinter {
 			sb.append(c).append("/").append(report.closedNodes().size());
 			ps.println(sb.append(s).toString());
 		}
+	}
+	
+	private static void planPrettyPrint(String planString) {
+		String[] tokens = planString.split("");
 	}
 }
