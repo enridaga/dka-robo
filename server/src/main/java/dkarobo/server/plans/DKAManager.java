@@ -237,6 +237,10 @@ public class DKAManager {
 			dataset.end();
 		}
 	}
+	
+	public Coordinates toCoordinates(String location){
+		return locations.get(location);
+	}
 
 	/**
 	 * Logic: find the nearest known place.
