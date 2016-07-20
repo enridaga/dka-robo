@@ -91,7 +91,7 @@ public class BotEndpoint {
 	 * @return
 	 */
 	public Response setdummybot() {
-		context.setAttribute(Application._ObjectBOT, new DummyBot(100, 100, 0));
+		context.setAttribute(Application._ObjectBOT, new DummyBot( 2,-31, 0)); // Markbucks 100, 100, 0));
 		return Response.ok().build();
 	}
 
