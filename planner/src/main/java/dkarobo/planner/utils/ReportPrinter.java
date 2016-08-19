@@ -27,11 +27,12 @@ public class ReportPrinter {
 
 	public static String toString(Plan p) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(" ");
+//		sb.append(" ");
 		for (Node a : ((BacktracePlan) p).getPath()) {
 			if (!a.isRoot()) {
-				sb.append("Action: ");
-				sb.append(new RendererImpl().append(a.getAction().getAction()).toString());
+//				sb.append("Action: ");
+				sb.append("Action: ").append(actionPrettyPrint(new RendererImpl().append(a.getAction().getAction()).toString()));
+//				sb.append(new RendererImpl().append(a.getAction().getAction()).toString());
 			}
 //			sb.append("[").append(RoboBestNode.computeMinValidity(a) + RoboBestNode.computeAvgValidity(a))
 //			.append("] \n ");
@@ -65,8 +66,38 @@ public class ReportPrinter {
 			ps.println(sb.append(s).toString());
 		}
 	}
+
+	private static String actionPrettyPrint(String action) {
+		StringBuffer sb = new StringBuffer();
+		String[] tokens = action.split("\\[");
+		String actionName = tokens[0].substring(1);
+		ArrayList<String> arguments = new ArrayList<String>();
+		String[] argumentTokens = tokens[1].split(",");
+		
+		
+		for(int i = 0; i < argumentTokens.length; ++i) {
+			arguments.add(deUrlify(argumentTokens[i].trim().replaceAll("\\]", "").replaceAll("\\)", "")));
+		}
+		
+		if(actionName.equalsIgnoreCase("move")) {
+			sb.append(actionName + " from: " + arguments.get(0) + " to: " + arguments.get(1));
+		}
+		else if (actionName.equalsIgnoreCase("Temperature")){
+			sb.append("Read " + actionName + " at: " + arguments.get(0));
+		}
+		else if (actionName.equalsIgnoreCase("CheckWifi")){
+			sb.append("Sniff Wifi at: " + arguments.get(0));
+		}
+		else if (actionName.equalsIgnoreCase("CountPeople")){
+			sb.append("Count People at: " + arguments.get(0));
+		}
+		else if (actionName.equalsIgnoreCase("Humidity")){
+			sb.append("Read " + actionName + " at: " + arguments.get(0));
+		}
+		return sb.toString();
+	}
 	
-	private static void planPrettyPrint(String planString) {
-		String[] tokens = planString.split("");
+	private static String deUrlify(String url) {
+		return url.substring(url.lastIndexOf("/")+1);
 	}
 }

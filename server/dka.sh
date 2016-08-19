@@ -18,7 +18,8 @@ elif [ $1 = "setbot" ] ; then
    curl $flags -G "$base/bot/$1" --data-urlencode address="$2"
 else
    # $1 is expected to be one of: query, update
+   #curl $flags -G "$base/$1" --data-urlencode $1="$2" -H "Accept:$3"
    curl $flags -G "$base/$1" --data-urlencode $1="$2"
-   echo $flags -G "$base/$1" --data-urlencode $1 = $2 
+   #echo $flags -G "$base/$1" --data-urlencode $1 = $2
 fi
 

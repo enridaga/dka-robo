@@ -21,6 +21,7 @@ curl -G "http://localhost:8080/query" --data-urlencode query="$1"
 echo "Plan"
 curl -G "http://localhost:8080/planner/plan" --data-urlencode query="$1"
 
+echo ""
 echo "Sending plan to robot"
 curl -G "http://localhost:8080/bot/send" --data-urlencode query="$1"
 
