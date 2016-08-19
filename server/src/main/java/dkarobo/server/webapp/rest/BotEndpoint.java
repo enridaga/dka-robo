@@ -64,7 +64,14 @@ public class BotEndpoint {
 	public Response whereAreYou() {
 		log.trace("Calling GET /wru");
 		try {
-			return Response.ok(getBot().whereAreYou().toString()).build();
+			Coordinates c = getBot().whereAreYou();
+			JsonObject jow = new JsonObject();
+			JsonObject jo = new JsonObject();
+			jo.addProperty("x", c.getX());
+			jo.addProperty("y", c.getY());
+			jo.addProperty("theta", c.getZ());
+			jow.add("current_position", jo);
+			return Response.ok(jow.toString()).build();
 		} catch (Exception e) {
 			throw new WebApplicationException(e);
 		}
