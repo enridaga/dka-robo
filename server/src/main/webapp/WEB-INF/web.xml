@@ -60,10 +60,10 @@
 		<param-name>dka-data</param-name>
 		<param-value>./dka-server-data</param-value>
 	</context-param>
-	<context-param>
+	<!-- <context-param>
 		<param-name>dka-load</param-name>
 		<param-value>./KB_partial.nq</param-value>
-	</context-param>
+	</context-param> -->
 
 	<servlet-mapping>
 		<servlet-name>DKAEndpoint</servlet-name>
