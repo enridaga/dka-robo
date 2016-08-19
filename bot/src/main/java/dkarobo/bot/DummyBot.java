@@ -33,7 +33,7 @@ public class DummyBot implements Bot {
 
 	@Override
 	public boolean isBusy() {
-		return doing != null;
+		return doing != null && doing.isAlive();
 	}
 
 	@Override
@@ -74,10 +74,12 @@ public class DummyBot implements Bot {
 			while (System.currentTimeMillis() < stop) {
 				try {
 					Thread.sleep(1000);
+					System.out.println("(doing)");
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
+			System.out.println("(finished)");
 		}
 	}
 

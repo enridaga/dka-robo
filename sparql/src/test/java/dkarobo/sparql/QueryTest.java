@@ -201,5 +201,9 @@ public class QueryTest {
 		for (Fact fa : facts) {
 			l.info("{}", new RendererImpl().append(fa).toString());
 		}
+		
+		
 	}
+	
+
 }

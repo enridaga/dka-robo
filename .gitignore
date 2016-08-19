@@ -2,3 +2,4 @@
 **/.settings/
 **/.classpath
 **/dka-server-data/
+**/dka-server-jetty/
