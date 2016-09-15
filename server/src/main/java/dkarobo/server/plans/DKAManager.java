@@ -311,6 +311,7 @@ public class DKAManager {
 	 */
 	public String[] toBotJsonPlan(Plan plan) {
 		List<String> actions = new ArrayList<String>();
+		int index=0;
 		for (GroundAction ga : plan.getActions()) {
 			Operator operator = ga.getAction().operator();
 			JSONObject o = new JSONObject();
@@ -324,16 +325,26 @@ public class DKAManager {
 				o.put("x", coo.getX());
 				o.put("y", coo.getY());
 				o.put("t", coo.getZ());
+				o.put("index", index);
+				index++;
 			} else if (operator instanceof Observe) {
 				if (operator instanceof Humidity) {
 					o.put("name", "read_humidity");
+					o.put("index", index);
+					index++;
 				} else if (operator instanceof CountPeople) {
 					o.put("name", "count_people");
+					o.put("index", index);
+					index++;
 				}else if (operator instanceof Temperature) {
 					o.put("name", "read_temperature");
+					o.put("index", index);
+					index++;
 				} else if (operator instanceof CheckWiFi) {
 					o.put("name", "sniff_wifi");
 					o.put("iface", "wlan0");
+					o.put("index", index);
+					index++;
 				} else {
 					throw new RuntimeException("Unsupported Action Operator");
 				}

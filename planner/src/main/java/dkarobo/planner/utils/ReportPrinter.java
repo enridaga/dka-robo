@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import com.jayway.jsonpath.Configuration;
+
 import dkarobo.planner.RoboBestNode;
 import dkarobo.planner.RoboPlanner;
 import harmony.core.api.plan.Plan;
@@ -26,19 +28,37 @@ public class ReportPrinter {
 	}
 
 	public static String toString(Plan p) {
-		StringBuilder sb = new StringBuilder();
+//		StringBuilder sb = new StringBuilder();
 //		sb.append(" ");
+
+		StringBuilder jsonPlanSb = new StringBuilder();
+		jsonPlanSb.append("[");
+		int index=0;
 		for (Node a : ((BacktracePlan) p).getPath()) {
 			if (!a.isRoot()) {
 //				sb.append("Action: ");
-				sb.append("Action: ").append(actionPrettyPrint(new RendererImpl().append(a.getAction().getAction()).toString()));
+//				sb.append("Action: ").append(actionPrettyPrint(new RendererImpl().append(a.getAction().getAction()).toString()));
 //				sb.append(new RendererImpl().append(a.getAction().getAction()).toString());
+
+				Object curActionJson = actionJsonPrint(new RendererImpl().append(a.getAction().getAction()).toString());
+				Configuration.defaultConfiguration().jsonProvider().setProperty(curActionJson, "index", index);
+				jsonPlanSb.append(Configuration.defaultConfiguration().jsonProvider().toJson(curActionJson));
+				
+				// not last item
+				if(((BacktracePlan) p).getPath().indexOf(a) < ((BacktracePlan) p).getPath().size()-1) {
+					jsonPlanSb.append(",");
+				}
+				index++;
 			}
 //			sb.append("[").append(RoboBestNode.computeMinValidity(a) + RoboBestNode.computeAvgValidity(a))
 //			.append("] \n ");
-			sb.append("\n");
+//			sb.append("\n");
 		}
-		return sb.toString();
+//		return sb.toString();	
+		
+		jsonPlanSb.append("]");
+		
+		return jsonPlanSb.toString();
 	}
 
 	public static void print(PrintStream ps, BestFirstSearchReport report) {
@@ -68,6 +88,7 @@ public class ReportPrinter {
 	}
 
 	private static String actionPrettyPrint(String action) {
+		System.out.println("ActionOriginal " + action);
 		StringBuffer sb = new StringBuffer();
 		String[] tokens = action.split("\\[");
 		String actionName = tokens[0].substring(1);
@@ -97,7 +118,46 @@ public class ReportPrinter {
 		return sb.toString();
 	}
 	
+	
+	// TODO I know, this is not appropriate
 	private static String deUrlify(String url) {
 		return url.substring(url.lastIndexOf("/")+1);
+	}
+	
+	// Json String
+	private static Object actionJsonPrint(String action) {
+		String[] tokens = action.split("\\[");
+		String actionName = tokens[0].substring(1);
+		ArrayList<String> arguments = new ArrayList<String>();
+		String[] argumentTokens = tokens[1].split(",");
+		Object json = Configuration.defaultConfiguration().jsonProvider().parse("{}");
+		
+		
+		for(int i = 0; i < argumentTokens.length; ++i) {
+			arguments.add(deUrlify(argumentTokens[i].trim().replaceAll("\\]", "").replaceAll("\\)", "")));	
+		}
+		
+		if(actionName.equalsIgnoreCase("move")) {
+			Configuration.defaultConfiguration().jsonProvider().setProperty(json, "name", actionName);
+			Configuration.defaultConfiguration().jsonProvider().setProperty(json, "from", arguments.get(0));
+			Configuration.defaultConfiguration().jsonProvider().setProperty(json, "to", arguments.get(1));
+		}
+		else if (actionName.equalsIgnoreCase("Temperature")){
+			Configuration.defaultConfiguration().jsonProvider().setProperty(json, "name", "Read"+actionName);
+			Configuration.defaultConfiguration().jsonProvider().setProperty(json, "at", arguments.get(0));
+		}
+		else if (actionName.equalsIgnoreCase("CheckWifi")){
+			Configuration.defaultConfiguration().jsonProvider().setProperty(json, "name", actionName);
+			Configuration.defaultConfiguration().jsonProvider().setProperty(json, "at", arguments.get(0));
+		}
+		else if (actionName.equalsIgnoreCase("CountPeople")){
+			Configuration.defaultConfiguration().jsonProvider().setProperty(json, "name", actionName);
+			Configuration.defaultConfiguration().jsonProvider().setProperty(json, "at", arguments.get(0));
+		}
+		else if (actionName.equalsIgnoreCase("Humidity")){
+			Configuration.defaultConfiguration().jsonProvider().setProperty(json, "name", "Read"+actionName);
+			Configuration.defaultConfiguration().jsonProvider().setProperty(json, "at", arguments.get(0));
+		}
+		return json;
 	}
 }

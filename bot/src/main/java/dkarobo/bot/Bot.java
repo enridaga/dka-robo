@@ -17,4 +17,6 @@ public interface Bot {
 	public void abort() throws IOException;
 
 	public String whatHaveYouDone() throws IOException;
+	
+	public String currentPlan() throws IOException;
 }

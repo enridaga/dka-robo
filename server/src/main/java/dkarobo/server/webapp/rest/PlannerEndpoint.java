@@ -87,7 +87,26 @@ public class PlannerEndpoint {
 				return Response.noContent().build();
 			}
 			
+			StringBuilder jsonPlanSb = new StringBuilder();
+			
+			String[] subPlans = manager.toBotJsonPlan(plan);
+			jsonPlanSb.append("[");
+			
+			for(int i = 0;i < subPlans.length; ++i) {
+				String subPlan = subPlans[i];
+				
+				jsonPlanSb.append(subPlan);
+				
+				// not last item
+				if(i < subPlans.length-1) {
+					jsonPlanSb.append(",");
+				}
+			}
+			
+			jsonPlanSb.append("]");
+			
 			return Response.ok(ReportPrinter.toString(plan)).build();
+			//return Response.ok(jsonPlanSb.toString()).build();
 		} catch (Exception e) {
 			log.error("",e);
 			throw new WebApplicationException(e);

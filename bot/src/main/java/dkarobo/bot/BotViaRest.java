@@ -67,9 +67,9 @@ public class BotViaRest implements Bot {
 		log.info("Send to Bot: {}", thePlan);
 		StringBuilder sb = new StringBuilder();
 		boolean first = true;
+		sb.append("[");
 		for (String s : thePlan) {
-			if (first) {
-				sb.append("[");
+			if (first) {	
 				first = false;
 			} else {
 				sb.append(',');
@@ -122,13 +122,22 @@ public class BotViaRest implements Bot {
 		if (conn.getResponseCode() != 204) {
 			throw new IOException(conn.getResponseMessage());
 		}
-
 	}
 
 	@Override
 	public String whatHaveYouDone() throws IOException {
 		try {
 			URLConnection connection = new URL(webAddress + "/do").openConnection();
+			return IOUtils.toString(connection.getInputStream());
+		} catch (IOException e) {
+			throw new IOException(e);
+		}
+	}
+	
+	@Override
+	public String currentPlan() throws IOException {
+		try {
+			URLConnection connection = new URL(webAddress + "/currentplan").openConnection();
 			return IOUtils.toString(connection.getInputStream());
 		} catch (IOException e) {
 			throw new IOException(e);

@@ -1,5 +1,7 @@
 package dkarobo.bot;
 
+import java.io.IOException;
+
 public class DummyBot implements Bot {
 	private Thread doing = null;
 	private Coordinates coords;
@@ -95,5 +97,11 @@ public class DummyBot implements Bot {
 	@Override
 	public String toString() {
 		return "DummyBot";
+	}
+
+	@Override
+	public String currentPlan() throws IOException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

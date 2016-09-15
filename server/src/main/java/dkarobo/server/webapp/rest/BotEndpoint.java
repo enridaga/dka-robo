@@ -1,7 +1,10 @@
 package dkarobo.server.webapp.rest;
 
+import harmony.core.api.plan.Plan;
+
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.DELETE;
@@ -21,6 +24,7 @@ import javax.ws.rs.core.UriInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -33,7 +37,6 @@ import dkarobo.bot.Position;
 import dkarobo.server.plans.DKAManager;
 import dkarobo.server.plans.PlansCache;
 import dkarobo.server.webapp.Application;
-import harmony.core.api.plan.Plan;
 
 @Path("/bot")
 public class BotEndpoint {
@@ -197,6 +200,56 @@ public class BotEndpoint {
 			return Response.ok().build();
 		}else{
 			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	
+	@GET
+	@Path("/currentplan")
+	public Response currentPlan() {
+		log.debug("GET /bot/currentplan");
+		try {
+			String jsonResponse = getBot().currentPlan();
+			log.debug("CURRENT PLAN RECEIVED: {}", jsonResponse);
+			JsonArray object = new JsonParser().parse(jsonResponse).getAsJsonArray();
+			JsonArray ret = new JsonArray();
+			
+			for(int i = 0; i < object.size(); ++i) {
+				JsonObject curActionJson = object.get(i).getAsJsonObject();
+				// parsing response into json object
+				// getting the coordinates
+				String actionName = curActionJson.get("name").getAsString();
+				if(actionName.equals("goto")) {
+					curActionJson.addProperty("name", "Move");
+					Coordinates coordinates = Position.create(curActionJson.get("x").getAsFloat(), curActionJson.get("y").getAsFloat(), curActionJson.get("t").getAsFloat());
+					DKAManager manager = (DKAManager) context.getAttribute(Application._ObjectMANAGER);
+					String location = manager.toLocation(coordinates);
+					try {
+						URI locationURI = new URI(location);
+						String[] segments = locationURI.getPath().split("/");
+						location = segments[segments.length-1];
+					} catch (URISyntaxException e) {
+						location = location.substring(location.lastIndexOf('/') + 1);
+					}
+					curActionJson.addProperty("to", location);
+				}
+				else if(actionName.equals("sniff_wifi")) {
+					curActionJson.addProperty("name", "CheckWiFi");
+				}
+				else if(actionName.equals("read_temperature")) {
+					curActionJson.addProperty("name", "ReadTemperature");
+				}
+				else if(actionName.equals("read_humidity")) {
+					curActionJson.addProperty("name", "ReadHumidity");
+				}
+				else if(actionName.equals("count_people")) {
+					curActionJson.addProperty("name", "CountPeople");
+				}
+				ret.add(curActionJson);
+			}
+			//adding location to the action
+			return Response.ok(ret.toString()).build();
+		} catch (IOException e) {
+			throw new WebApplicationException(e);
 		}
 	}
 }
