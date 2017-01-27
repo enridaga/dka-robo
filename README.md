@@ -22,13 +22,13 @@ The system works as follows:
 Clone the repo in your desired location, cd into the server directory, then run
 
 ```
-dka-robo/server/run.sh -l KB_partial.nq
+sh run.sh -l KB_partial.nq
 ```
 
 this will start your server on port 8080, loading the knowledge base “KB_partial.nq” into a triple store. After the first time you can simply run 
 
 ```
-dka-robo/server/run.sh 
+sh ./run.sh 
 ```
 to start the server. 
 
