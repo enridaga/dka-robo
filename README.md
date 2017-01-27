@@ -57,7 +57,7 @@ and will show you  the plan that is computed
 ###Execute plan and KB update###
 You can send the plan to the robot and update the knowledge base using the plan computed by the DKA, running 
 ```
-sh ./dka.sh send “your query”
+sh ./dka.sh send "your query"
 ```
 ###Ask the robot###
 -  Where it is on the map: 
@@ -85,9 +85,10 @@ select ?room ?wifiSignal where {graph ?expiryDateInMs { VALUES(?room) { ( <http:
 Which is the temperature of room 20 and room 22?
 ```
 select ?room ?temp where {graph ?expiryDateInMs { VALUES(?room) { ( <http://data.open.ac.uk/kmi/location/Room22> ) (<http://data.open.ac.uk/kmi/location/Room20>) }  ?room <http://data.open.ac.uk/kmi/robo/hasTemperature> ?temp.  } }
-
+```
 What's the most comfortable meeting room between Room 22 and the Podium? (comfort score= (temp*hum)/nbOfPeople) 
-```select ?room ( (<http://www.w3.org/2001/XMLSchema#float>(?temp)+<http://www.w3.org/2001/XMLSchema#float>(?h))/<http://www.w3.org/2001/XMLSchema#float>(?ppl) AS ?comfort)  where {
+```
+select ?room ( (<http://www.w3.org/2001/XMLSchema#float>(?temp)+<http://www.w3.org/2001/XMLSchema#float>(?h))/<http://www.w3.org/2001/XMLSchema#float>(?ppl) AS ?comfort)  where {
 graph ?g { VALUES(?room) {  (<http://data.open.ac.uk/kmi/location/Room22> ) (<http://data.open.ac.uk/kmi/location/Podium> ) } .  ?room <http://data.open.ac.uk/kmi/robo/hasPeopleCount> ?ppl }.  graph ?g1 { VALUES(?room) {  (<http://data.open.ac.uk/kmi/location/Room22> ) (<http://data.open.ac.uk/kmi/location/Podium> )} .  ?room <http://data.open.ac.uk/kmi/robo/hasHumidity> ?h }.
 graph ?g2 { VALUES(?room) {  (<http://data.open.ac.uk/kmi/location/Room22> ) (<http://data.open.ac.uk/kmi/location/Podium> ) } .  ?room <http://data.open.ac.uk/kmi/robo/hasTemperature> ?temp }. }
 ```
