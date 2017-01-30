@@ -19,8 +19,12 @@ The system works as follows:
 
 ###Start the server ###
 
-Clone the repo in your desired location, cd into the server directory, then run
+Clone the repo in your desired location, then compile (you need maven for that) as follows:
 
+```
+mvn clean install
+```
+then move in the server/ directory and run:
 ```
 sh run.sh -l KB_partial.nq
 ```
@@ -39,11 +43,14 @@ The server allows the following operations:
 - ask the robot for its location, status of the execution of the plan, or if it is busy
 
 ###Connect with the robot###
-You need to set a connection with the robot which will execute the plan computed by the system For this, simply run:
+You need to set a connection with the robot which will execute the plan computed by the system.
+For this, simply run:
 ```
 sh ./dka.sh setbot "ip_of_your_robot"
 ```
-You can also set a dummy bot which will return fake data. Extend the DummyRobot.java class in the dka.bot package if you need.
+You can also set a dummy bot which will return fake data. 
+
+Extend the DummyRobot.java class in the dka.bot package if you need.
 
 ###Send a query ###
 
