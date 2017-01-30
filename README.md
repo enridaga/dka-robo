@@ -29,7 +29,9 @@ then move in the server/ directory and run:
 sh run.sh -l KB_partial.nq
 ```
 
-this will start your server on port 8080, loading the knowledge base “KB_partial.nq” into a triple store. Note that after first time there is no need to run the -l flag, but just use 
+The command starts the server on port 8080, loading the knowledge base “KB_partial.nq”. 
+`KB_partial.nq` is the knowledge base about locations and coordinates. This must be equivalent to the spatial knowledge of the robot.
+Note that after first time there is no need to run the -l flag, but just use 
 ```
 sh ./run.sh 
 ```
