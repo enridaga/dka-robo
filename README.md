@@ -42,19 +42,26 @@ The server allows the following operations:
 - update the knowledge base through sending the plan to the robot
 - ask the robot for its location, status of the execution of the plan, or if it is busy
 
+###Work with a robot ###
+You need to have a ros node running on the robot to interact with dka, you find one here: https://github.com/McKracken/kmi_ros/blob/master/dynamic_knowledge_acquisition/scripts/robot_server.py
+
+It is possible to test dka and develop it without an actual robot (see next section).
+
 ###Connect with the robot###
 You need to set a connection with the robot which will execute the plan computed by the system.
 For this, simply run:
 ```
 sh ./dka.sh setbot "ip_of_your_robot"
 ```
-You can also set a dummy bot which will return fake data. 
-
+You can set a dummy bot which will return fake data, useful when developing: 
+```
+sh ./dka.sh setbot "dummy"
+```
 Extend the DummyRobot.java class in the dka.bot package if you need.
 
 ###Send a query ###
 
-If you simply want to send a SPARQL query to the KB, run
+If you want to send a SPARQL query to the KB, run
 ```
 sh ./dka.sh query "your_query"
 ```
@@ -85,7 +92,6 @@ sh ./dka.sh doing
 ```
 sh ./dka.sh isbusy
 ```
-Note that you need to have a server installed on your robot, e.g. https://github.com/McKracken/kmi_ros/blob/master/dynamic_knowledge_acquisition/scripts/robot_server.py
 
 ##Additional Info##
 ###Query examples###
