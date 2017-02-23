@@ -53,6 +53,11 @@
 <http://data.open.ac.uk/kmi/area/Activity2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://data.open.ac.uk/kmi/robo/Area> <http://data.open.ac.uk/kmi/graph/static> .
 <http://data.open.ac.uk/kmi/area/Activity2> <http://data.open.ac.uk/kmi/robo/subAreaOf> <http://data.open.ac.uk/kmi/area/NW> <http://data.open.ac.uk/kmi/graph/static> .
 <http://data.open.ac.uk/kmi/area/Activity2> <http://data.open.ac.uk/kmi/robo/hasLocation> <http://data.open.ac.uk/kmi/location/Activity2> <http://data.open.ac.uk/kmi/graph/static> .
+<http://data.open.ac.uk/kmi/location/Activity2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://data.open.ac.uk/kmi/robo/Activity> <http://data.open.ac.uk/kmi/graph/static> .
+<http://data.open.ac.uk/kmi/location/Activity3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://data.open.ac.uk/kmi/robo/Activity> <http://data.open.ac.uk/kmi/graph/static> .
+<http://data.open.ac.uk/kmi/location/Activity4> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://data.open.ac.uk/kmi/robo/Activity> <http://data.open.ac.uk/kmi/graph/static> .
+<http://data.open.ac.uk/kmi/location/Activity5> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://data.open.ac.uk/kmi/robo/Activity> <http://data.open.ac.uk/kmi/graph/static> .
+<http://data.open.ac.uk/kmi/location/Activity6> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://data.open.ac.uk/kmi/robo/Activity> <http://data.open.ac.uk/kmi/graph/static> .
 <http://data.open.ac.uk/kmi/location/Activity6> <http://data.open.ac.uk/kmi/robo/hasTemperature> "-1"^^<http://www.w3.org/2001/XMLSchema#long> <http://data.open.ac.uk/kmi/graph/dynamic/0> .
 <http://data.open.ac.uk/kmi/location/Activity6> <http://data.open.ac.uk/kmi/robo/hasHumidity> "-1"^^<http://www.w3.org/2001/XMLSchema#long> <http://data.open.ac.uk/kmi/graph/dynamic/0> .
 <http://data.open.ac.uk/kmi/location/Activity6> <http://data.open.ac.uk/kmi/robo/hasWiFiSignal> "-1"^^<http://www.w3.org/2001/XMLSchema#long> <http://data.open.ac.uk/kmi/graph/dynamic/0> .
