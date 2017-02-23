@@ -27,7 +27,7 @@ public class InvalidQuadCollector implements QuadListener, QuadCollector {
 		}
 		int validity = provider.elapsingSeconds(G, t);
 		if (validity < 0) {
-			log.trace(" - invalid quad");
+			log.trace("Invalid quad :: {} {} {}", new Object[]{G, t, validity});
 			// Invalid Quad
 			invalid.add(new String[] { Integer.toString(validity), t.getSubject().toString(true),
 					t.getPredicate().toString(true), t.getObject().toString(true) });
