@@ -148,7 +148,7 @@ public class DKAManager {
 				}
 				
 				int tripleValidityInSeconds =  rules.get(bestMatchingRule); //System.currentTimeMillis() + ;
-//				log.debug(" {} matches <{}> <{}> \"{}\" {}", new Object[]{ bestMatchingRule, S.getSignature(), P.getSignature(), O.getSignature(), rules.get(bestMatchingRule)});
+				log.trace(" {} matches <{}> <{}> \"{}\" {}", new Object[]{ bestMatchingRule, S.getSignature(), P.getSignature(), O.getSignature(), rules.get(bestMatchingRule)});
 //							 
 //				int tripleValidityInSeconds = 100;
 				// return this
