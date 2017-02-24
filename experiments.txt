@@ -1,0 +1,38 @@
+1) Best wifi in the activities?
+
+ "select ?room ?wifiSignal where {graph ?expiryDateInMs { VALUES(?room) { ( <http://data.open.ac.uk/kmi/location/Activity2> ) (<http://data.open.ac.uk/kmi/location/Activity3>  )(<http://data.open.ac.uk/kmi/location/Activity4> ) (<http://data.open.ac.uk/kmi/location/Activity5> ) }  ?room <http://data.open.ac.uk/kmi/robo/hasWiFiSignal> ?wifiSignal. } } ORDER BY DESC(?t) LIMIT 1"
+ 
+ 
+2) (robot@Markbucks) What's the temp of Rooms 20 and 22?
+
+"select ?room ?temp where {graph ?expiryDateInMs { VALUES(?room) { ( <http://data.open.ac.uk/kmi/location/Room22> ) (<http://data.open.ac.uk/kmi/location/Room20>) }  ?room <http://data.open.ac.uk/kmi/robo/hasTemperature> ?temp.  } }"
+
+
+
+-------- do these after you update the KB as below -------
+
+3) (unfeasible q) (robot@Markbucks) Is most comfortable room between Room 20, 22 and the Podium (Markbucks is not a meeting room)? this returns a -1 Plan (=unfeasible)
+
+
+"select ?room ( (<http://www.w3.org/2001/XMLSchema#float>(?temp)+<http://www.w3.org/2001/XMLSchema#float>(?h))/<http://www.w3.org/2001/XMLSchema#float>(?ppl) AS ?comfort)  where {
+graph ?g { VALUES(?room) {  (<http://data.open.ac.uk/kmi/location/Room22> ) (<http://data.open.ac.uk/kmi/location/Podium> ) } .  ?room <http://data.open.ac.uk/kmi/robo/hasPeopleCount> ?ppl }.  graph ?g1 { VALUES(?room) {  (<http://data.open.ac.uk/kmi/location/Room22> ) (<http://data.open.ac.uk/kmi/location/Podium> ) } .  ?room <http://data.open.ac.uk/kmi/robo/hasHumidity> ?h }.
+graph ?g2 { VALUES(?room) {  (<http://data.open.ac.uk/kmi/location/Room22> ) (<http://data.open.ac.uk/kmi/location/Podium> ) } .  ?room <http://data.open.ac.uk/kmi/robo/hasTemperature> ?temp }. } "
+
+
+4) (robot@Markbucks) What's the most comfortable meeting room between Room 22 and the Podium? (8-actions plan) 
+
+"select ?room ( (<http://www.w3.org/2001/XMLSchema#float>(?temp)+<http://www.w3.org/2001/XMLSchema#float>(?h))/<http://www.w3.org/2001/XMLSchema#float>(?ppl) AS ?comfort)  where {
+graph ?g { VALUES(?room) {  (<http://data.open.ac.uk/kmi/location/Room22> ) (<http://data.open.ac.uk/kmi/location/Podium> ) } .  ?room <http://data.open.ac.uk/kmi/robo/hasPeopleCount> ?ppl }.  graph ?g1 { VALUES(?room) {  (<http://data.open.ac.uk/kmi/location/Room22> ) (<http://data.open.ac.uk/kmi/location/Podium> )} .  ?room <http://data.open.ac.uk/kmi/robo/hasHumidity> ?h }.
+graph ?g2 { VALUES(?room) {  (<http://data.open.ac.uk/kmi/location/Room22> ) (<http://data.open.ac.uk/kmi/location/Podium> ) } .  ?room <http://data.open.ac.uk/kmi/robo/hasTemperature> ?temp }. }"
+
+--------------------
+
+KB update
+
+just replace the four "1468856700000" with whatever you choose as you time+30mins
+
+
+
+select ?room ( (<http://www.w3.org/2001/XMLSchema#float>(?temp)+<http://www.w3.org/2001/XMLSchema#float>(?h))/<http://www.w3.org/2001/XMLSchema#float>(?ppl) AS ?comfort)  where {
+graph ?g {  ?room <http://data.open.ac.uk/kmi/robo/hasPeopleCount> ?ppl }.  graph ?g1 {  ?room <http://data.open.ac.uk/kmi/robo/hasHumidity> ?h }.
+graph ?g2 { ?room <http://data.open.ac.uk/kmi/robo/hasTemperature> ?temp }. }
