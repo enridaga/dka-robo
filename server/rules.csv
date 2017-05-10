@@ -3,7 +3,7 @@
 ?x <http://data.open.ac.uk/kmi/robo/hasTemperature> ?y;300
 <http://data.open.ac.uk/kmi/location/MarkBucks> <http://data.open.ac.uk/kmi/robo/hasTemperature> ?y;180
 <http://data.open.ac.uk/kmi/location/Podium> <http://data.open.ac.uk/kmi/robo/hasTemperature> ?y;180
-<http://data.open.ac.uk/kmi/location/Room22> <http://data.open.ac.uk/kmi/robo/hasTemperature> ?y;60
+<http://data.open.ac.uk/kmi/location/Room22> <http://data.open.ac.uk/kmi/robo/hasTemperature> ?y;30
 ?x <http://data.open.ac.uk/kmi/robo/hasWiFiSignal> ?y;540
 ?x <http://data.open.ac.uk/kmi/robo/hasPeopleCount> ?y;3600
 <http://data.open.ac.uk/kmi/robo/Room22> <http://data.open.ac.uk/kmi/robo/hasPeopleCount> ?y;1800

@@ -1,5 +1,5 @@
 #!/bin/bash
-flags=""
+flags="-v"
 
 if [ $# -eq 0 ]
   then
