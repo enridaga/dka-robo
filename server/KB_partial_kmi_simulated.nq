@@ -137,7 +137,7 @@
 <http://data.open.ac.uk/kmi/location/MediaLab> <http://data.open.ac.uk/kmi/robo/hasPeopleCount> "1"^^<http://www.w3.org/2001/XMLSchema#long> <http://data.open.ac.uk/kmi/graph/dynamic/0> .
 <http://data.open.ac.uk/kmi/location/MediaLab> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://data.open.ac.uk/kmi/robo/MeetingRoom> <http://data.open.ac.uk/kmi/graph/static> .
 <http://data.open.ac.uk/kmi/location/Activity1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://data.open.ac.uk/kmi/robo/Location> <http://data.open.ac.uk/kmi/graph/static> .
-<http://data.open.ac.uk/kmi/location/Activity1> <http://data.open.ac.uk/kmi/robo/xCoord> "-16.2.0" <http://data.open.ac.uk/kmi/graph/static> .
+<http://data.open.ac.uk/kmi/location/Activity1> <http://data.open.ac.uk/kmi/robo/xCoord> "-16.2" <http://data.open.ac.uk/kmi/graph/static> .
 <http://data.open.ac.uk/kmi/location/Activity1> <http://data.open.ac.uk/kmi/robo/yCoord> "10.5" <http://data.open.ac.uk/kmi/graph/static> .
 <http://data.open.ac.uk/kmi/area/Activity1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://data.open.ac.uk/kmi/robo/Area> <http://data.open.ac.uk/kmi/graph/static> .
 <http://data.open.ac.uk/kmi/area/Activity1> <http://data.open.ac.uk/kmi/robo/subAreaOf> <http://data.open.ac.uk/kmi/area/NW> <http://data.open.ac.uk/kmi/graph/static> .
